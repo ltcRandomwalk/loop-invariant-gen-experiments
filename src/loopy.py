@@ -218,18 +218,18 @@ class Loopy:
             loopy_prompt = Prompt(
                 system_text_file="templates/simplified_system_message.txt",
                 prompt_text_file="templates/simplified_prompt_with_nudges.txt",
-                num_completions=15,
+                num_completions=5,
             )
         elif prompt == "without_nudges":
             loopy_prompt = Prompt(
                 system_text_file="templates/simplified_system_message.txt",
                 prompt_text_file="templates/simplified_prompt.txt",
-                num_completions=15,
+                num_completions=5,
             )
         elif prompt == "arrays_simplified":
             loopy_prompt = Prompt(
                 prompt_text_file="templates/simplified_prompt_arrays.txt",
-                num_completions=8,
+                num_completions=5,
             )
         elif prompt == "arrays_without_nudges":
             loopy_prompt = Prompt(
@@ -247,7 +247,7 @@ class Loopy:
             loopy_prompt = Prompt(
                 system_text_file=None,
                 prompt_text_file="templates/plain.txt",
-                num_completions=15,
+                num_completions=5,
             )
 
         for benchmark_index, benchmark_file in enumerate(sliced_benchmarks):
@@ -273,6 +273,8 @@ class Loopy:
                     prompt=loopy_prompt,
                     extraction_filter=codeblock_filter,
                 )
+                
+                #print(annotation_blocks, llm_outputs)
 
                 instance_log_json["llm_conversation"] = llm_outputs
                 instance_log_json["annotation_blocks"] = annotation_blocks

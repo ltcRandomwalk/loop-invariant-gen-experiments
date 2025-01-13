@@ -1,0 +1,124 @@
+[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c (with preprocessing)
+[wp] Running WP plugin...
+[kernel:annot:missing-spec] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c:8: Warning: 
+  Neither code nor specification for function unknown_int, generating default assigns from the prototype
+[wp] Warning: Missing RTE guards
+[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c:20: Warning: 
+  Missing assigns clause (assigns 'everything' instead)
+[wp] 11 goals scheduled
+[wp] [Timeout] typed_main_loop_invariant_4_preserved (Qed 6ms) (Z3)
+[wp] Proved goals:   10 / 11
+  Qed:               9
+  Alt-Ergo 2.4.3:    1 (7ms)
+  Timeout:           1
+------------------------------------------------------------
+  Function main
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 14):
+Prove: true.
+Prover Qed returns Valid (3ms)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 14):
+Prove: true.
+Prover Qed returns Valid (1ms)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 15):
+Prove: true.
+Prover Qed returns Valid (3ms)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 15):
+Prove: true.
+Prover Qed returns Valid (2ms)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 16):
+Let x = -k.
+Assume {
+  Type: is_sint32(k) /\ is_sint32(k_1) /\ is_sint32(n) /\ is_sint32(k - 1) /\
+      is_sint32(n - k) /\ is_sint32(1 + n - k).
+  (* Invariant *)
+  Have: 0 <= k_1.
+  (* Invariant *)
+  Have: 0 < k_1.
+  (* Invariant *)
+  Have: 0 < n.
+  (* Invariant *)
+  Have: 0 <= k.
+  (* Invariant *)
+  Have: k <= n.
+  (* Invariant *)
+  Have: 0 < k.
+}
+Prove: k <= (1 + n).
+Prover Z3 4.12.2 returns Valid (Qed:7ms) (20ms) (26203)
+Prover CVC4 1.6 returns Valid (Qed:7ms) (30ms) (7001)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:7ms) (7ms) (13)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 16):
+Prove: true.
+Prover Qed returns Valid (1ms)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 17):
+Let x = j + k.
+Assume {
+  Type: is_sint32(j) /\ is_sint32(k) /\ is_sint32(k_1) /\ is_sint32(k - 1) /\
+      is_sint32(1 + j) /\ is_sint32(x).
+  (* Invariant *)
+  Have: 0 <= k_1.
+  (* Invariant *)
+  Have: 0 < k_1.
+  (* Invariant *)
+  Have: 0 < x.
+  (* Invariant *)
+  Have: 0 <= k.
+  (* Invariant *)
+  Have: 0 <= j.
+  (* Invariant *)
+  Have: 0 < k.
+  (* Invariant *)
+  Have: (-1) <= j.
+}
+Prove: 2 <= k.
+Prover Z3 4.12.2 returns Timeout (Qed:6ms) (1')
+Prover CVC4 1.6 returns Unknown (Qed:6ms)
+Prover Alt-Ergo 2.4.3 returns Timeout (Qed:6ms) (1')
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 17):
+Prove: true.
+Prover Qed returns Valid (2ms)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 18):
+Prove: true.
+Prover Qed returns Valid (3ms)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 18):
+Prove: true.
+Prover Qed returns Valid (2ms)
+
+------------------------------------------------------------
+
+Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c, line 24):
+Prove: true.
+Prover Qed returns Valid (3ms)
+
+------------------------------------------------------------
+[wp] Report '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c_fs.json'
+[kernel] System error: /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c_.report: No such file or directory

@@ -1,0 +1,3 @@
+[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c (with preprocessing)
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c:8:[kernel:annot:missing-spec] warning: Neither code nor specification for function unknown_int, generating default assigns from the prototype
+[kernel] System error: /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/sv-benchmarks/loop-zilu/benchmark34_conjunctive.c_.report: No such file or directory

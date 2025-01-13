@@ -1,0 +1,7 @@
+[ { "goal": "typed_main_assert", "property": "main_assert",
+    "file": "/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/VeriMAP/TRACER-testloop9_VeriMAP_true.c",
+    "line": 38, "function": "main", "smoke": false, "passed": false,
+    "verdict": "timeout",
+    "provers": [ { "prover": "qed", "time": 0.001952, "success": 0 },
+                 { "prover": "Z3:4.12.2", "time": 0., "success": 0 } ],
+    "timeout": 1 } ]

@@ -1,0 +1,121 @@
+[95m[1m[>][0m [94m[1mUsing input file: experiments/loop_invariants.txt[0m
+[95m[1m[>][0m [94m[1mUsing model: gpt-35-turbo[0m
+[95m[1m[>][0m [94m[1mUsing checker: frama-c, with timeout: 3[0m
+[95m[1m[>][0m [94m[1mValidating input files[0m
+[95m[1m[>][0m [94m[1mFound 469 valid benchmarks[0m
+[95m[1m[>][0m [94m[1mRunning benchmark: 1/1[0m
+[94m[1mSending prompt to the 'gpt-35-turbo' model:[0m
+[1m[4m[92msystem:[0m 
+[1m[4m[92muser:[0m Consider the following C program:
+```
+// Source: data/benchmarks/LinearArbitrary-SeaHorn/VeriMAP/MAP-CPA-example_VeriMAP_true.c
+#include <stdlib.h>
+#define assume(e) if(!(e)) exit(-1);
+
+int main() {
+  int i = 0;
+  int a = 0;
+
+  while (1) {
+    if (i == 20) {
+       goto LOOPEND;
+    } else {
+       i++;
+       a++;
+    }
+
+    if (i != a) {
+      goto ERROR;
+    }
+  }
+
+  LOOPEND:
+
+  if (a != 20) {
+     goto ERROR;
+  }
+
+  return (0);
+  { ERROR: {; 
+//@ assert(\false);
+}
+}
+  return (-1);
+}
+
+```
+Output the loop invariants for the loop in the program above.
+Output all the loop invariants in one code block. For example:
+```
+/*@
+    loop invariant i1;
+    loop invariant i2;
+*/
+```
+[94m============================================================[0m
+, azure, 2024-08-01-preview
+[92m[1mReceived response from the 'gpt-35-turbo' model:[0m
+[1m[4m[92mCompletion 1:[0m
+```
+/*@
+    loop invariant 0 <= i <= 20;
+    loop invariant 0 <= a <= 20;
+    loop invariant i == a || i == a - 1;
+*/
+```
+[1m[4m[92mCompletion 2:[0m
+```
+/*@
+  loop invariant 0 <= i <= 20;
+  loop invariant 0 <= a <= 20;
+  loop invariant i == a || i == a - 1;
+*/
+```
+[1m[4m[92mCompletion 3:[0m
+```
+/*@
+    loop invariant 0 <= i <= 20;
+    loop invariant 0 <= a <= 20;
+    loop invariant i == a || i == a - 1;
+*/
+```
+[1m[4m[92mCompletion 4:[0m
+```
+/*@
+    loop invariant 0 <= i <= 20;
+    loop invariant 0 <= a <= 20;
+    loop invariant i == a || i == a - 1;
+*/
+```
+[1m[4m[92mCompletion 5:[0m
+```
+/*@
+  loop invariant 0 <= i <= 20;
+  loop invariant 0 <= a <= 20;
+  loop invariant i == a || i == a + 1;
+*/
+```
+[95m[1m[>][0m [94m[1mChecking completion 1[0m
+[95m[1m[>][0m [94m[1mHoudini procedure initiated[0m
+[91m[1m[Error][0m Could not find strong enough annotations.
+[91m[1m[Error][0m Completion 1 is incorrect
+[95m[1m[>][0m [94m[1mChecking completion 2[0m
+[95m[1m[>][0m [94m[1mHoudini procedure initiated[0m
+[91m[1m[Error][0m Could not find strong enough annotations.
+[91m[1m[Error][0m Completion 2 is incorrect
+[95m[1m[>][0m [94m[1mChecking completion 3[0m
+[95m[1m[>][0m [94m[1mHoudini procedure initiated[0m
+[91m[1m[Error][0m Could not find strong enough annotations.
+[91m[1m[Error][0m Completion 3 is incorrect
+[95m[1m[>][0m [94m[1mChecking completion 4[0m
+[95m[1m[>][0m [94m[1mHoudini procedure initiated[0m
+[91m[1m[Error][0m Could not find strong enough annotations.
+[91m[1m[Error][0m Completion 4 is incorrect
+[95m[1m[>][0m [94m[1mChecking completion 5[0m
+[95m[1m[>][0m [94m[1mHoudini procedure initiated[0m
+[91m[1m[Error][0m Could not find strong enough annotations.
+[91m[1m[Error][0m Completion 5 is incorrect
+[95m[1m[>][0m [94m[1mChecking combined annotations for benchmark: 1/1[0m
+[92m[1m[Success][0m Combined annotations are correct for benchmark: 1/1
+[92m[1m[Success][0m Benchmark 1/1 succeeded
+[95m[1m[>][0m [94m[1mWriting log for ../dataset/loop_invariants/LinearArbitrary-SeaHorn/VeriMAP/MAP-CPA-example_VeriMAP_true.c[0m

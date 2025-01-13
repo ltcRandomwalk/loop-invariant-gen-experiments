@@ -1,0 +1,47 @@
+[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c (with preprocessing)
+[kernel:typing:no-proto] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c:11: Warning: 
+  Calling function unknown1 that is declared without prototype.
+  Its formals will be inferred from actual arguments
+[wp] Running WP plugin...
+[kernel:annot:missing-spec] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c:7: Warning: 
+  Neither code nor specification for function unknown1, generating default assigns from the prototype
+[wp] Warning: Missing RTE guards
+[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c:16: Warning: 
+  Missing assigns clause (assigns 'everything' instead)
+[wp] 3 goals scheduled
+[wp] Proved goals:    3 / 3
+  Qed:               2
+  Alt-Ergo 2.4.3:    1 (5ms)
+------------------------------------------------------------
+  Function main
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c, line 13):
+Let x_1 = x + y.
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y) /\ is_sint32(1 + y) /\ is_sint32(x_1).
+  (* Goal *)
+  When: y < 0.
+  (* Then *)
+  Have: x < 0.
+}
+Prove: x_1 < 0.
+Prover Z3 4.12.2 returns Valid (Qed:4ms) (20ms) (25351)
+Prover CVC4 1.6 returns Valid (Qed:4ms) (30ms) (6649)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:4ms) (5ms) (13)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c, line 13):
+Prove: true.
+Prover Qed returns Valid (0.75ms)
+
+------------------------------------------------------------
+
+Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c, line 21):
+Prove: true.
+Prover Qed returns Valid (1ms)
+
+------------------------------------------------------------
+[wp] Report '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c_fs.json'
+[kernel] System error: /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/04.c_.report: No such file or directory

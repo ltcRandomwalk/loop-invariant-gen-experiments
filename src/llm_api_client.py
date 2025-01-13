@@ -5,6 +5,7 @@ from typing import Any, List
 
 import openai
 import tiktoken
+from openai import AzureOpenAI
 
 from llm_utils import Logger, Settings
 from llm import LLMClient
@@ -29,7 +30,7 @@ class LLMAPIClient(LLMClient):
 
         api_client = None
         if self.settings.provider == "azure-openai":
-            api_client = AzureOpenAI(
+            api_client = MyAzureOpenAI(
                 self.settings.get_api_key(),
                 self.settings.get_api_base(),
                 self.settings.get_api_version(),
@@ -69,8 +70,8 @@ class LLMAPIClient(LLMClient):
                 )
 
                 completions = []
-                for completion in response["choices"]:
-                    completions.append(completion["message"]["content"])
+                for completion in response.choices:
+                    completions.append(completion.message.content)
 
                 Logger.log_model_response(
                     self.settings.model,
@@ -108,16 +109,18 @@ class Provider:
         raise NotImplementedError
 
 
-class AzureOpenAI(Provider):
+class MyAzureOpenAI(Provider):
     def __init__(self, api_key, api_base, api_version):
         super().__init__("azure-openai", api_key, api_base, api_version)
         self.api_type = "azure"
 
     def get_completion(self, **kwargs):
         openai.api_key = self.api_key
-        openai.api_base = self.api_base
+        #openai.api_base = self.api_base
         openai.api_type = self.api_type
         openai.api_version = self.api_version
+        Logger.log(f", {openai.api_type}, {openai.api_version}")
+        
 
         model = kwargs.get("model")
         messages = kwargs.get("messages")
@@ -128,7 +131,25 @@ class AzureOpenAI(Provider):
         frequency_penalty = kwargs.get("frequency_penalty")
         presence_penalty = kwargs.get("presence_penalty")
         stop = kwargs.get("stop")
-
+        
+        client = AzureOpenAI(
+            azure_endpoint=self.api_base,
+            api_key=self.api_key,
+            api_version=self.api_version
+        )
+        #Logger.log(f"got here!!")
+        response = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens,
+            temperature=temperature,
+            n=num_completions,
+            top_p=top_p,
+            frequency_penalty=frequency_penalty,
+            presence_penalty=presence_penalty,
+            stop=stop
+        )
+        '''
         response = openai.ChatCompletion.create(
             engine=model,
             messages=messages,
@@ -140,7 +161,7 @@ class AzureOpenAI(Provider):
             presence_penalty=presence_penalty,
             stop=stop,
         )
-
+        '''
         return response
 
     def enforce_token_limit(self, prompt: list[dict[str, str]], model: str):
@@ -152,12 +173,14 @@ class AzureOpenAI(Provider):
         threshold = 0
         if model == "text-davinci-003":
             threshold = 2500
-        elif model == "gpt-3.5-turbo":
+        elif model == "gpt-35-turbo":
             threshold = 2500
         elif model == "gpt-4":
             threshold = 6000
         elif model == "gpt-4-32k":
             threshold = 30000
+        elif model == "gpt-4o":
+            threshold = 3000
         if tokens_count > threshold:
             raise Exception(
                 f"Tokens size '{tokens_count}' exceeded the '{threshold}' limit."

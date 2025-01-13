@@ -1,0 +1,2 @@
+[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/VeriMAP/TRACER-testloop13_VeriMAP_true.c (with preprocessing)
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/VeriMAP/TRACER-testloop13_VeriMAP_true.c:11:[kernel:annot:missing-spec] warning: Neither code nor specification for function unknown_uint, generating default assigns from the prototype

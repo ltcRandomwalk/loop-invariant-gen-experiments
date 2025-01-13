@@ -14,4 +14,4 @@ If the assertion is guarded by a condition, use the guard condition in an implic
 
 If certain variables are non-deterministic at the beginning or end of the loop, use an implication to make the invariant trivially true at that location. 
 
-Output the loop invariants for the loop in the program above. Let's think step by step.
+Output the loop invariants for the loop in the program above. Your output should only include the loop invariants block without anything else. Do not explain your answer.  Let's think step by step.

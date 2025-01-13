@@ -1,0 +1,9 @@
+[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv (with preprocessing)
+[wp] Running WP plugin...
+[wp] Warning: No goal generated
+[wp] No proof obligations
+[report] Computing properties status...
+--------------------------------------------------------------------------------
+--- No status to report
+--------------------------------------------------------------------------------
+[report] Dumping properties in '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/__output_dump.csv'

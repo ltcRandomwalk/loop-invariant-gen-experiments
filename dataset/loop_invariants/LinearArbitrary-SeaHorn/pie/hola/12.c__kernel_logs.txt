@@ -1,0 +1,4 @@
+[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c (with preprocessing)
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:9:[kernel:typing:no-proto] warning: Calling function unknown1 that is declared without prototype.
+Its formals will be inferred from actual arguments
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:7:[kernel:annot:missing-spec] warning: Neither code nor specification for function unknown1, generating default assigns from the prototype

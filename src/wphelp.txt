@@ -1,0 +1,342 @@
+Plug-in name: WP
+Plug-in shortname: wp
+Description: Proof by Weakest Precondition Calculus
+
+Most options of the form '-wp-option-name' and without any parameter
+have an opposite with the name '-wp-no-option-name'.
+
+Most options of the form '-option-name' and without any parameter
+have an opposite with the name '-no-option-name'.
+
+Options taking a string as argument should preferably be written
+-option-name="argument".
+
+***** LIST OF AVAILABLE OPTIONS:
+
+-wp-frama-c-stdlib-terminate  Frama-C stdlib functions without terminates
+                    specification are considered to terminate when called.
+                    (opposite option is -wp-no-frama-c-stdlib-terminate)
+-wp-session <dir>   set the plug-in session directory to <dir>
+-wp-share <dir>     set the plug-in share directory to <dir> (may be used if
+                    the plug-in is not installed at the same place as
+                    Frama-C)
+
+*** COMPUTATION STRATEGIES
+
+-wp-callee-precond  Use pre-conditions of callee. (set by default, opposite
+                    option is -wp-no-callee-precond)
+-wp-declarations-terminate  Undefined external functions without terminates
+                    specification are considered to terminate when called.
+                    (opposite option is -wp-no-declarations-terminate)
+-wp-definitions-terminate  Defined functions without terminates specification
+                    are considered to terminate when called. (opposite option
+                    is -wp-no-definitions-terminate)
+-wp-init-const      Use initializers for global const variables. (set by
+                    default, opposite option is -wp-no-init-const)
+-wp-max-split <n>   Set maximum number of splitted sub-goals (default 1000)
+-wp-precond-weakening  Discard pre-conditions of side behaviours (sound but
+                    incomplete optimisation). (opposite option is
+                    -wp-no-precond-weakening)
+-wp-rte             Generate RTE guards before WP. (opposite option is
+                    -wp-no-rte)
+-wp-smoke-dead-assumes  When generating smoke tests, look for dead assumes
+                    (set by default, opposite option is
+                    -wp-no-smoke-dead-assumes)
+-wp-smoke-dead-call  When generating smoke tests, look for non-terminating
+                    calls (set by default, opposite option is
+                    -wp-no-smoke-dead-call)
+-wp-smoke-dead-code  When generating smoke tests, look for unreachable code
+                    (set by default, opposite option is
+                    -wp-no-smoke-dead-code)
+-wp-smoke-dead-local-init  When generating smoke tests, look for dead local
+                    variables initialization (opposite option is
+                    -wp-no-smoke-dead-local-init)
+-wp-smoke-dead-loop  When generating smoke tests, look for inconsistent loop
+                    invariants (set by default, opposite option is
+                    -wp-no-smoke-dead-loop)
+-wp-smoke-tests     Smoke-tests : look for inconsistent contracts (best
+                    effort) (opposite option is -wp-no-smoke-tests)
+-wp-split           Split if-then-else into sub-goals (see also
+                    -wp-max-split) (opposite option is -wp-no-split)
+-wp-split-cnf <N>   Apply CNF transformation on goals at depth N (default 0,
+                    -1 unlimited)
+-wp-split-conj      Split conjunctive goals into sub-goals (opposite option
+                    is -wp-no-split-conj)
+-wp-split-switch    Split switch-cases into sub-goals (see also
+                    -wp-max-split). (set by default, opposite option is
+                    -wp-no-split-switch)
+-wp-unfold-assigns <n>  Unfold up to <n> levels of aggregates and arrays in
+                    assigns.
+                    Value -1 means unlimited depth (default 0)
+-wp-variant-with-terminates  Prove loop variant under the termination
+                    hypothesis. (opposite option is
+                    -wp-no-variant-with-terminates)
+
+*** GETTING INFORMATION
+
+-wp-help            help of plug-in WP
+-wp-h               alias for option -wp-help
+
+*** GOAL GENERATOR
+
+-wp                 Generate proof obligations for all (selected) properties.
+                    (opposite option is -no-wp)
+-wp-bhv <b,...>     Select only properties belonging to listed behaviors (the
+                    name "default!" can be used to select the default
+                    anonymous behavior) of the selected functions (defaults
+                    to all behaviors).
+-wp-dump            Dump WP calculus graph. (opposite option is -wp-no-dump)
+-wp-fct <f,...>     Select properties of given functions (defaults to all
+                    functions).
+-wp-prop <p,...>    Select properties based names and category.
+                    Use +name or +category to select properties and -name or
+                    -category to remove them from the selection. The '+' sign
+                    can be omitted.
+                    Categories are: @lemma, @requires, @assigns, @ensures,
+                    @exits, @assert, @invariant, @variant, @breaks,
+                    @continues, @returns, @complete_behaviors,
+                    @disjoint_behaviors, @terminates, @decreases and @check
+                    (which includes all check clauses).
+-wp-skip-fct <f,...>  Skip the specified functions (defaults to none).
+-wp-status-all      Select properties with any status. (opposite option is
+                    -wp-no-status-all)
+-wp-status-invalid  Select properties with status 'Invalid'. (opposite option
+                    is -wp-no-status-invalid)
+-wp-status-maybe    Select properties with status 'Maybe'. (set by default,
+                    opposite option is -wp-no-status-maybe)
+-wp-status-valid    Select properties with status 'Valid'. (opposite option
+                    is -wp-no-status-valid)
+
+*** MODEL SELECTION
+
+-wp-alias-init      Use initializers for aliasing propagation. (opposite
+                    option is -wp-no-alias-init)
+-wp-alias-vars <var,...>  Consider variable names aliased.
+-wp-context-vars <var,...>  Consider variable names in isolated context.
+-wp-extern-arrays   Put some default size for extern arrays. (opposite option
+                    is -wp-no-extern-arrays)
+-wp-literals        Export content of string literals. (opposite option is
+                    -wp-no-literals)
+-wp-model <model+...>  Memory model selection. Available selectors:
+                    * 'Hoare' logic variables only
+                    * 'Typed' typed pointers only
+                    * '+nocast' no pointer cast
+                    * '+cast' unsafe pointer casts
+                    * '+raw' no logic variable
+                    * '+ref' by-reference-style pointers detection
+                    * '+nat/+int' natural / machine-integers arithmetics
+                    * '+real/+float' real / IEEE floating point arithmetics
+                    * 'Eva' (experimental) based on the results from Eva
+                    plugin
+-wp-ref-vars <var,...>  Consider variable names by reference.
+-wp-unalias-vars <var,...>  Consider variable names non-aliased.
+-wp-volatile        Sound modeling of volatile access.
+                    Use -wp-no-volatile to ignore volatile attributes. (set
+                    by default, opposite option is -wp-no-volatile)
+-wp-weak-int-model  Suppress integral type side conditions within
+                    lemmas
+                    (possibly unsound) (opposite option is
+                    -wp-no-weak-int-model)
+
+*** OUTPUT MESSAGES
+
+-wp-debug <n>       level of debug for plug-in WP (default to 0)
+-wp-log <K_1:file_1,...>  copy log messages from WP to a file. <K> is a
+                    combination of these characters:
+                    a: ALL messages (equivalent to 'dfiruw')
+                    d: debug       e: user or internal error (same as 'iu')
+                    f: feedback    i: internal error
+                    r: result      u: user error    w: warning
+                    An empty <K> (e.g. ":file.txt") defaults to 'iruw'. One
+                    plug-in can output to several files and vice-versa.
+-wp-msg-key <k1[,...,kn]>  enables message display for categories
+                    <k1>,...,<kn>. Use -wp-msg-key help to get a list of
+                    available categories, and * to enable all categories
+-wp-verbose <n>     level of verbosity for plug-in WP (default to 1)
+-wp-warn-key <k1[=s1][,...,kn[=sn]]>  set warning status for category <k1> to
+                    <s1>,...,<kn> to <sn>. Use -wp-warn-key help to get a
+                    list of available categories, and * to enable all
+                    categories. Possible statuses are inactive,
+                    feedback-once, once, active, error-once, error, and
+                    abort. Defaults to active
+
+*** PROOF OBLIGATIONS
+
+-wp-check-memory-model  Insert memory model hypotheses in function contracts
+                    and check them on call. (experimental) (opposite option
+                    is -wp-no-check-memory-model)
+-wp-deprecated-report-json <file.json>  Output report in json format into
+                    given file.
+                    If the file already exists, it is used for
+                    stabilizing range of steps in other reports.
+-wp-filename-truncation <n>  Truncate basename of proof obligation files
+                    after <n> characters.
+                    Since numbers can be added as suffixes to make theses
+                    names unique,
+                    filename lengths can be highter to <n>. No truncation is
+                    performed
+                    when the value equals to zero (default: 60).
+-wp-out <dir>       Set working directory for generated files.
+                    Defaults to some temporary directory.
+-wp-print           Pretty-prints proof obligations on standard output.
+                    (opposite option is -wp-no-print)
+-wp-report <report,...>  Report specification file(s)
+-wp-report-basename <file>  Basename of generated reports (default
+                    "wp-report")
+-wp-report-json <file.json>  Output proof results in JSON format.
+-wp-warn-memory-model  Warn Against Memory Model Hypotheses (set by default,
+                    opposite option is -wp-no-warn-memory-model)
+
+*** PROVER INTERFACE
+
+-wp-auto <s>        Activate auto-search with strategy <s>.
+                    Use '-wp-auto <?>' for available strategies.
+-wp-auto-backtrack <n>  Backtracking limit (-wp-auto only, de-activated by
+                    default).
+                    Limits backtracking when applying strategies.
+-wp-auto-depth <n>  Depth of auto-search (-wp-auto only, default 5).
+                    Limits the number of nested level in strategies.
+-wp-auto-width <n>  Width of auto-search (-wp-auto only, default 10).
+                    Limits the number of pending goals in strategies.
+-wp-cache <mode>    WP cache mode:
+                    - 'none': no cache, run provers (default)
+                    - 'update': use cache or run provers and update cache
+                    - 'cleanup': update mode with garbage collection
+                    - 'replay': update mode with no cache update
+                    - 'rebuild': always run provers and update cache
+                    - 'offline': use cache but never run provers
+                    You can also use the environment variable FRAMAC_WP_CACHE
+                    instead.
+-wp-cache-dir <dir>  Specify global cache directory (no cleanup mode).
+                    By default, cache entries are stored in the WP session
+                    directory.
+                    You can also use the environment variable
+                    FRAMAC_WP_CACHEDIR instead.
+-wp-cache-env       Gives environment variables precedence over command
+                    line
+                    for cache management:
+                    - FRAMAC_WP_CACHE overrides -wp-cache
+                    - FRAMAC_WP_CACHEDIR overrides -wp-cache-dir
+                    Disabled by default. (opposite option is
+                    -wp-no-cache-env)
+-wp-cache-print     Show cache directory (opposite option is
+                    -wp-no-cache-print)
+-wp-detect          List installed provers. (opposite option is
+                    -wp-no-detect)
+-wp-driver <file,...>  Load drivers for linking to external libraries
+-wp-dry-finalize-scripts  Scripts that might be removed by
+                    -wp-finalize-scripts are kept, a message is printed
+                    instead for each file. The marks directory is kept.
+                    (opposite option is -wp-no-dry-finalize-scripts)
+-wp-fct-timeout <f1:t1,...,fn:tn>  Customize the WP timeout (in secondes) for
+                    each specified function (t1 seconds for f1, t2 for f2,
+                    etc).
+-wp-finalize-scripts  Remove untracked scripts according to the tracking
+                    directory if it does exist (does not remove anything
+                    otherwise). (opposite option is -wp-no-finalize-scripts)
+-wp-gen             Only generate prover files (default: no). (opposite
+                    option is -wp-no-gen)
+-wp-interactive <mode>  WP mode for interactive Why-3 provers (eg: Coq):
+                    - 'batch': check current proof (default)
+                    - 'update': update and check proof
+                    - 'edit': edit proof before check
+                    - 'fix': check and edit proof if necessary
+                    - 'fixup': update proof and fix
+                    
+-wp-interactive-timeout <n>  Set the timeout (in seconds) for checking
+                    scripts
+                    of interactive provers (default: 30).
+-wp-par <p>         Number of parallel proof process (default: 4)
+-wp-prepare-scripts  Initialize a script tracking directory in the session
+                    directory. (opposite option is -wp-no-prepare-scripts)
+-wp-proof-trace     Keeps output of provers for valid POs (default: no)
+                    (opposite option is -wp-no-proof-trace)
+-wp-prover <dp,...>  Submit proof obligations to prover(s):
+                    - 'none' (no prover run)
+                    - 'script' (replay all session scripts)
+                    - 'tip' (replay or init scripts for failed goals)
+                    - '<why3-prover>' (any Why-3 prover, see -wp-detect)
+                    
+-wp-run-all-provers  Run all specified provers on each goal not proved by
+                    Qed. Do not stop when a prover succeeds. (default: no)
+                    (opposite option is -wp-no-run-all-provers)
+-wp-script-on-stdout  When enabled (default: no), display scripts on stdout
+                    instead of writing them on disk. (opposite option is
+                    -wp-no-script-on-stdout)
+-wp-smoke-timeout <n>  Set the timeout (in seconds) for provers (default: 2).
+-wp-steps <n>       Set number of steps for provers.
+-wp-time-extra <n>  Set extra-time (in seconds) for proof replay (default:
+                    5).
+-wp-time-margin <n>  Set margin-time (in seconds) for considering a proof
+                    automatic.
+                    When using the 'tip' prover, scripts are created or
+                    cancelled
+                    if the proof time is greater or lower than (timeout -
+                    margin).
+                    (default: 2).
+-wp-timeout <n>     Set the timeout (in seconds) for provers (default: 2).
+
+*** PROVER OPTIONS
+
+-wp-why3-extra-config <file,...>  Additional config files for Why3
+-wp-why3-opt <option,...>  Additional options for Why3
+
+*** QED SIMPLIFICATIONS
+
+-wp-bound-forall-unfolding <n>  Instantiate up to <n> forall-integers
+                    hypotheses.
+-wp-clean           Use a simple cleaning in case of -wp-no-let. (set by
+                    default, opposite option is -wp-no-clean)
+-wp-core            Lift core facts through branches. (set by default,
+                    opposite option is -wp-no-core)
+-wp-extensional     Use extensional equality on compounds (hypotheses only).
+                    (set by default, opposite option is -wp-no-extensional)
+-wp-filter          Filter non-used variables and related hypotheses. (set by
+                    default, opposite option is -wp-no-filter)
+-wp-filter-init     Use aggressive filtering of initialization hypotheses.
+                    (set by default, opposite option is -wp-no-filter-init)
+-wp-ground          Use aggressive ground simplifications. (set by default,
+                    opposite option is -wp-no-ground)
+-wp-init-summarize-array  Summarize contiguous initializers with quantifiers.
+                    (set by default, opposite option is
+                    -wp-no-init-summarize-array)
+-wp-let             Use variable elimination. (set by default, opposite
+                    option is -wp-no-let)
+-wp-parasite        Use singleton-variable filtering. (set by default,
+                    opposite option is -wp-no-parasite)
+-wp-prenex          Normalize nested foralls into prenex-form (opposite
+                    option is -wp-no-prenex)
+-wp-pruning         Prune trivial branches. (set by default, opposite option
+                    is -wp-no-pruning)
+-wp-reduce          Reduce function equalities with precedence to
+                    constructors. (set by default, opposite option is
+                    -wp-no-reduce)
+-wp-simpl           Enable Qed Simplifications. (set by default, opposite
+                    option is -wp-no-simpl)
+-wp-simplify-forall  Remove machine integer ranges in quantifiers. (opposite
+                    option is -wp-no-simplify-forall)
+-wp-simplify-is-cint  Remove redundant machine integer range hypothesis. (set
+                    by default, opposite option is -wp-no-simplify-is-cint)
+-wp-simplify-land-mask  Tight logical masks on unsigned integers. (set by
+                    default, opposite option is -wp-no-simplify-land-mask)
+-wp-simplify-type   Remove all `Type` constraints. (opposite option is
+                    -wp-no-simplify-type)
+
+*** REGION ANALYSIS
+
+-region-annot       Register '@region' ACSL Annotations (auto with
+                    -wp-region) (opposite option is -no-region-annot)
+-wp-region          Perform Region Analysis (experimental) (opposite option
+                    is -wp-no-region)
+-wp-region-cluster  Compute region clustering fixpoint (set by default,
+                    opposite option is -wp-no-region-cluster)
+-wp-region-fixpoint  Compute region aliasing fixpoint (set by default,
+                    opposite option is -wp-no-region-fixpoint)
+-wp-region-flat     Flatten arrays by default (opposite option is
+                    -wp-no-region-flat)
+-wp-region-inline   Inline aliased sub-clusters (set by default, opposite
+                    option is -wp-no-region-inline)
+-wp-region-pack     Pack clusters by default (set by default, opposite option
+                    is -wp-no-region-pack)
+-wp-region-rw       Written region are considered read-write by default (set
+                    by default, opposite option is -wp-no-region-rw)
