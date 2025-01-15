@@ -4,6 +4,8 @@ from openai import OpenAI
 import os
 
 import re
+from smt_solver import verify_implication
+import json
 
 def extract_custom_strings(input_string):
     pattern = r'/\*@.*?\*/'
@@ -29,7 +31,33 @@ def get_closeai_answer(messages):
     
     return chat_completion.choices[0].message.content
     
+
+def check_loop_invariants(benchmark_file, invariant_answer):
+    benchmark = FramaCBenchmark(benchmark_file, benchmark_features, False)
     
+    codeblock_filter = lambda x: checker.has_invariant(x) or (
+        checker.has_function_contract(x)
+        if "multiple_methods" in benchmark_features
+        else False
+    )
+    
+    code = benchmark.get_code(benchmark_file)
+    
+    annotation_blocks = extract_custom_strings(invariant_answer)[0]
+    
+    checker_input_with_annotations = benchmark.combine_llm_outputs(
+        benchmark.get_code(benchmark_file),
+        [annotation_blocks],
+        benchmark_features,
+    )
+    
+    __success, checker_message = checker.check(
+        checker_input_with_annotations,
+        check_variant=False,
+        check_contracts=False,
+    )
+    
+    return __success, annotation_blocks, checker_message
 
 def get_init_invariants(benchmark_file):
     benchmark = FramaCBenchmark(benchmark_file, benchmark_features, False)
@@ -56,23 +84,9 @@ def get_init_invariants(benchmark_file):
     */
     """
     
-    annotation_blocks = extract_custom_strings(get_closeai_answer([{"role": "user", "content": prompt}]))[0]
+    initial_invariant = get_closeai_answer([{"role": "user", "content": prompt}])
     
-    print(annotation_blocks)
-    
-    checker_input_with_annotations = benchmark.combine_llm_outputs(
-        benchmark.get_code(benchmark_file),
-        [annotation_blocks],
-        benchmark_features,
-    )
-    
-    __success, checker_message = checker.check(
-        checker_input_with_annotations,
-        check_variant=False,
-        check_contracts=False,
-    )
-    
-    return __success, annotation_blocks, checker_message
+    return check_loop_invariants(benchmark_file, initial_invariant)
 
 def parse_framac_output(checker_message):
     not_established_invariants = []
@@ -113,21 +127,19 @@ def establishment_feedback(code, annotation_block, loop_invariant):
     {annotation_block}
     
     The establishment of the loop invariant {loop_invariant} cannot be verified. In order to help you correct the mistake, I will ask you to give a proof of the establishment of this loop invariant {loop_invariant}.
-    In particular, you should prove that the loop invariant holds before the loop. You should fisrt list the known conditions, and from the conditions, prove the loop invariant step by step.
+    
+    In particular, you should prove that the loop invariant holds before the loop. You should fisrt list the known conditions, and from the conditions, prove that the loop invariant holds before the loop step by step.
     The conditions in this case are the program states before the loop. Note that, if a variable is not initialized, you should not make any assumption on it.
     
-    Answer the question in the following format:
+    You should first prove the goal in natural language, and then formalize the key steps of your proof with a json file. The format of the json file is as follow. For the blank <Proof Goal>, briefly summary the proof goal in natural language.  For each implication, represent it in the format "c1 ==> c2". c1 and c2 should be pure C logical expressions, without any natural languange in it. c1 can derive c2 without any other conditions.
+    ```json
+    {{
+        "Step 1: <Proof Goal>": ["c1 ==> c2", "c1 ==> c2", ...]
+        "Step 2: <Proof Goal>": ["c1 ==> c2", "c1 ==> c2", ...]
+        ...
+    }}
     ```
-    Known Conditions:
-    <>
     
-    Step 1: <Proof Goal>
-    <Proof>
-    
-    Step 2: <Proof Goal>
-    <Proof>
-    
-    ...
     
     """
     
@@ -139,7 +151,7 @@ def get_formalized_proof(previous_conversation):
     prompt = f"""
     Now, please formalize each step of your proof. In particular, for each step, you should represent your proof in a list of implications.
     Answer the question in the the following json format. For the blank <Proof Goal>, briefly summary the proof goal in natural language. 
-    For each implication, represent it in the format "c1 ==> c2", where c1 and c2 are two **pure C logical expressions**, and c1 can derive c2. Do not use any natural language in the implication. The implication should be able to be checked without other conditions.
+    For each implication, represent it in the format "c1 ==> c2". c1 and c2 should be **pure C logical expressions**, without any natural languange in it. c1 can derive c2 without any other conditions.
     {{
         "Step 1: <Proof Goal>": ["<Implication 1>", "<Implication 2>", ...]
         "Step 2: <Proof Goal>": ["<Implication 1>", "<Implication 2>", ...]
@@ -153,7 +165,49 @@ def get_formalized_proof(previous_conversation):
         {"role": "user", "content": prompt}
     ]
     
-    return get_closeai_answer(msgs)
+    return prompt, get_closeai_answer(msgs)
+
+def check_proof(proof_response):
+    json_proof = re.findall(r'(?<=```json\s).*?(?=```)', proof_response, re.DOTALL)[0]
+    
+    json_proof = json.loads(json_proof)
+    wrong_implications = []
+    for step, implications in json_proof.items():
+        for implication in implications:
+            if "==>" not in implication:
+                continue 
+            P_c, Q_c = implication.split("==>")
+            is_valid, model = verify_implication(P_c, Q_c)
+            if not is_valid:
+                wrong_implications.append((step, implication))
+    return wrong_implications
+
+def get_repaired_invariants(previous_conversation, wrong_implications, loop_invariant):
+    prompt = "In your proof, there are the following errors:\n"
+    
+    errors = ""
+    for step, implication in wrong_implications:
+        assert( "==>" in implication )
+        P_c, Q_c = implication.split("==>")
+        errors += f"In {step}, {P_c} cannot derive {Q_c}.\n"
+    prompt += errors 
+    
+    prompt += """
+    Based on the error, please carefully think about your thinking process of proposing the loop invariant and analyze why your previous loop invariant {loop_invariant} is not established (hold before the loop). Then, verify the program assertion again. That is, you should first propose loop invariants, and verify the final assertion based on them.  Do not make any change on the original program and assertion. 
+In the end, print the fixed loop invariants in the following format, where each loop invariant should be a C logical expression.
+    /*@
+        loop invariant i1: ...;
+        loop invariant i2: ...;
+        ...
+    */
+    """
+    
+    msgs = previous_conversation + [
+        {"role": "user", "content": prompt}
+    ]
+    
+    return prompt, get_closeai_answer(msgs)
+    
 
 
 if __name__ == "__main__":
@@ -165,19 +219,43 @@ if __name__ == "__main__":
     print(checker_message)
     if  __success:
         exit(0)
-    not_established_invariants, not_preserved_invariants, not_valid_assertion = parse_framac_output(checker_message)
-    print(not_established_invariants, not_preserved_invariants, not_valid_assertion)
+        
+        
+    iters = 1
+    while iters < 5:
+        print(f"================================Iteration: {iters}================================")
+        not_established_invariants, not_preserved_invariants, not_valid_assertion = parse_framac_output(checker_message)
+        print(not_established_invariants, not_preserved_invariants, not_valid_assertion)
+        
+        if not not_established_invariants:
+            exit(0)
+        
+        proof_prompt, proof_response = establishment_feedback(code, annotation_blocks, not_established_invariants[0])
+        
+        print(f"{proof_prompt}\n{proof_response}")
+        
+        wrong_implications = check_proof(proof_response)
+        print(wrong_implications)
+        if not wrong_implications:
+            exit(0)
+        
+        repaired_prompt, repaired_response = get_repaired_invariants([
+            {"role": "user", "content": proof_prompt},
+            {"role": "assistant", "content": proof_response}
+        ], wrong_implications, not_established_invariants[0])
+        
+        print(f"{repaired_prompt}\n{repaired_response}")
+        
+        __success, annotation_blocks, checker_message = check_loop_invariants(benchmark_file, repaired_response)
+        print(__success)
+        print(checker_message)
+        iters += 1
     
-    if not not_established_invariants:
-        exit(0)
+        
     
-    repair_prompt, natural_proof = establishment_feedback(code, annotation_blocks, not_established_invariants[0])
+        
     
-    formalized_proof = get_formalized_proof(
-        [
-            {"role": "user", "content": repair_prompt},
-            {"role": "assistant", "content": natural_proof}
-        ]
-    )
+        
     
-    print(f"{repair_prompt}\n{natural_proof}\n{formalized_proof}")
+    
+    
