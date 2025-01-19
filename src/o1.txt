@@ -1,0 +1,84 @@
+False
+loop invariant 1 <= i && i <= n + 1 is preserved but not established.
+loop invariant sn == 2 * (i - 1) is partially proven to be inductive.
+Assertion sn == n * 2 || sn == 0: Partially proven
+================================Iteration: 1================================
+['1 <= i && i <= n + 1'] [] []
+
+    #include <stdlib.h>
+#define assume(e) if(!(e)) exit(-1);
+extern int unknown_int(void);
+
+#include <stdlib.h>
+#define assume(e) if(!(e)) exit(-1);
+extern int unknown_int(void);
+
+int main(){
+  int i, n=unknown_int(), sn=0;
+assume(n < 1000 && n >= -1000);
+
+  for(i=1; i<=n; i++){
+    sn = sn +(2);
+  }
+  {;
+//@ assert(sn==n*(2)|| sn == 0);
+}
+
+} 
+    
+    Please analyze the above C code and verify the assertions in it. 
+    In order to verify the assertion, you need to propose loop invariants for the loop in the program. A loop invariant is a property that holds **before the loop**, and **after each iteration of the loop**. Besides, the loop invariants should be helpful to verify the assertion.
+    
+    In your previous answer, the loop invariants you proposed are:
+    /*@
+    loop invariant i1: 1 <= i && i <= n + 1;
+    loop invariant i2: sn == 2 * (i - 1);
+*/
+    
+    The establishment of the loop invariant 1 <= i && i <= n + 1 cannot be verified. In order to help you correct the mistake, I will ask you to give a proof of the establishment of this loop invariant 1 <= i && i <= n + 1.
+    
+    In particular, you should prove that the loop invariant holds before the loop. You should fisrt list the known conditions, and from the conditions, prove that the loop invariant holds before the loop step by step.
+    The conditions in this case are the program states before the loop. Note that, if a variable is not initialized, you should not make any assumption on it.
+    
+    You should first prove the goal in natural language, and then formalize the key steps of your proof with a json file. The format of the json file is as follow. For the blank <Proof Goal>, briefly summary the proof goal in natural language.  For each implication, represent it in the format "c1 ==> c2". c1 and c2 should be pure C logical expressions, without any natural languange in it. c1 can derive c2 without any other conditions. Do not add comments in the json file.
+    ```json
+    {
+        "Step 1: <Proof Goal>": ["c1 ==> c2", "c1 ==> c2", ...]
+        "Step 2: <Proof Goal>": ["c1 ==> c2", "c1 ==> c2", ...]
+        ...
+    }
+    ```
+    
+    
+    
+Below is a concise demonstration of how to prove that before the loop starts (i.e., immediately after its initialization), we have 1 ≤ i and i ≤ n+1.
+
+────────────────────────────────────────────
+Natural Language Proof
+────────────────────────────────────────────
+
+1) Immediately before the loop begins execution, the for-statement assigns i = 1. From this fact alone, we conclude 1 ≤ i (since i = 1).
+
+2) If the loop is about to be entered, then the condition i ≤ n must be true. Since i ≤ n implies i ≤ n+1 (adding 1 to both sides preserves the inequality), we obtain i ≤ n+1 before the first iteration commences. 
+
+Consequently, both parts of the invariant 1 ≤ i and i ≤ n+1 hold before the loop body executes for the first time.
+
+────────────────────────────────────────────
+Key Steps in JSON
+────────────────────────────────────────────
+
+```json
+{
+    "Step 1: Prove that 1 <= i": [
+        "i == 1 ==> 1 <= i"
+    ],
+    "Step 2: Prove that i <= n+1": [
+        "i <= n ==> i <= n+1"
+    ]
+}
+```
+(assert (= i 1)) (assert (<= 1 i))
+i == 1 1 <= i
+(assert (<= i n)) (assert (<= i (+ n 1)))
+i <= n i <= n + 1
+[]
