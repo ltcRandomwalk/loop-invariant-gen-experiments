@@ -1,86 +1,70 @@
 [kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c (with preprocessing)
 [wp] Running WP plugin...
 [wp] Warning: Missing RTE guards
-[wp] 10 goals scheduled
-[wp] Proved goals:   10 / 10
-  Qed:               9
-  Alt-Ergo 2.4.3:    1 (5ms)
+[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c:15: Warning: 
+  Missing assigns clause (assigns 'everything' instead)
+[wp] 7 goals scheduled
+[wp] Proved goals:    7 / 7
+  Qed:               6
+  Alt-Ergo 2.4.3:    1 (6ms)
 ------------------------------------------------------------
   Function main
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 10):
+Goal Preservation of Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 11):
 Prove: true.
-Prover Qed returns Valid (7ms)
+Prover Qed returns Valid (4ms)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 10):
+Goal Establishment of Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 11):
 Prove: true.
-Prover Qed returns Valid (0.84ms)
+Prover Qed returns Valid (0.61ms)
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 11):
+Goal Preservation of Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 12):
 Prove: true.
 Prover Qed returns Valid (11ms)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 11):
+Goal Establishment of Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 12):
 Prove: true.
-Prover Qed returns Valid (0.76ms)
+Prover Qed returns Valid
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 12):
+Goal Preservation of Invariant 'i3' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 13):
 Prove: true.
-Prover Qed returns Valid (5ms)
+Prover Qed returns Valid (2ms)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 12):
+Goal Establishment of Invariant 'i3' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 13):
 Prove: true.
-Prover Qed returns Valid (0.69ms)
+Prover Qed returns Valid (0.52ms)
 
 ------------------------------------------------------------
 
-Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 25):
+Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 24):
 Assume {
   Type: is_sint32(size_0) /\ is_sint32(x) /\ is_sint32(y) /\ is_sint32(z).
-  (* Invariant *)
-  Have: (size_0 < 0) \/ (x <= size_0).
-  (* Invariant *)
-  Have: (x = 0) \/ (y <= z).
-  (* Invariant *)
+  (* Invariant 'i1' *)
   Have: 0 <= x.
+  (* Invariant 'i2' *)
+  Have: ((0 < x) -> (y <= z)).
+  (* Invariant 'i3' *)
+  Have: ((0 < x) -> ((z <= y) -> (z = y))).
   (* Else *)
   Have: size_0 <= x.
   (* Then *)
   Have: 0 < size_0.
 }
 Prove: y <= z.
-Prover Z3 4.12.2 returns Valid (Qed:5ms) (20ms) (4720)
-Prover CVC4 1.6 returns Valid (Qed:5ms) (30ms) (6847)
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:5ms) (5ms) (24)
-
-------------------------------------------------------------
-
-Goal Loop assigns (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 13):
-Prove: true.
-Prover Qed returns Valid
-
-------------------------------------------------------------
-
-Goal Decreasing of Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 16):
-Prove: true.
-Prover Qed returns Valid (3ms)
-
-------------------------------------------------------------
-
-Goal Positivity of Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 16):
-Prove: true.
-Prover Qed returns Valid (4ms)
+Prover Z3 4.12.2 returns Valid (Qed:3ms) (30ms) (25671)
+Prover CVC4 1.6 returns Valid (Qed:3ms) (30ms) (6862)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:3ms) (6ms) (24)
 
 ------------------------------------------------------------
 [wp:pedantic-assigns] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c:5: Warning: 
@@ -1226,24 +1210,20 @@ Prover Qed returns Valid (4ms)
 --- Properties of Function 'main'
 --------------------------------------------------------------------------------
 
-[  Valid  ] Loop assigns (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 13)
+[  Valid  ] Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 11)
             by Wp.typed.
-[  Valid  ] Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 16)
+[  Valid  ] Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 12)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 10)
+[  Valid  ] Invariant 'i3' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 13)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 11)
-            by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 12)
-            by Wp.typed.
-[  Valid  ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 25)
+[  Valid  ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c, line 24)
             by Wp.typed.
 
 --------------------------------------------------------------------------------
 --- Status Report Summary
 --------------------------------------------------------------------------------
-   109 Completely validated
+   107 Completely validated
    322 Considered valid
-   431 Total
+   429 Total
 --------------------------------------------------------------------------------
 [report] Dumping properties in '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv/5.c__output_dump.csv'

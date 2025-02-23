@@ -1,11 +1,8 @@
 directory	file	line	function	property kind	status	property
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	21	main	loop invariant	Valid	j >= 0
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	22	main	loop invariant	Valid	x + y == k
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	23	main	loop invariant	Valid	m == 0 || m <= j
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	24	main	loop invariant	Valid	n < 1 ==> j == 0 && m == 0
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	25	main	loop invariant	Valid	n >= 1 ==> j <= n
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	26	main	loop invariant	Valid	m == 0 || m < j
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	50	main	user assertion	Unknown	\false
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	22	main	loop invariant	Valid	j >= 0
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	23	main	loop invariant	Valid	x + y == k
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	24	main	loop invariant	Valid	m == 0 || (m >= 0 && m < j)
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav	20.c	46	main	user assertion	Unknown	\false
 FRAMAC_SHARE/libc	stdlib.h	73	atof	from clause	Considered valid	assigns \result \from (indirect: nptr), (indirect: *(nptr + (0 ..)));
 FRAMAC_SHARE/libc	stdlib.h	75	atof	assigns clause	Considered valid	assigns \nothing;
 FRAMAC_SHARE/libc	stdlib.h	79	atoi	from clause	Considered valid	assigns \result \from (indirect: nptr), (indirect: *(nptr + (0 ..)));

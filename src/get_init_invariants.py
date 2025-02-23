@@ -6,6 +6,7 @@ import os
 import re
 from smt_solver import verify_implication
 import json
+import sys
 
 def extract_custom_strings(input_string):
     pattern = r'/\*@.*?\*/'
@@ -26,7 +27,7 @@ def get_closeai_answer(messages):
 
     chat_completion = client.chat.completions.create(
         messages=messages,
-        model="gpt-4o-2024-11-20",
+        model="chatgpt-4o-latest",
     )
     
     return chat_completion.choices[0].message.content
@@ -74,8 +75,8 @@ def get_init_invariants(benchmark_file):
     {code}
     Please analyze the above C code and verify the assertions in it. 
     In order to verify the assertion, you need to propose loop invariants for the loop in the program. A loop invariant is a property that holds **before the loop**, and **after each iteration of the loop**. Besides, the loop invariants should be helpful to verify the assertion.
-    Please print the loop invariants as C logical expressions. You can use "&&" or "||" to represent conjunction or disjunction. If a variable is not initialized, it can be any legal value. Do not use variables or functions that are not defined in the program. Do not change the original program and assertion. Do not explain.
-    Print the loop invaraints in the following format:
+    Please print the loop invariants as C logical expressions. You can use "&&" or "||" to represent conjunction or disjunction. If a variable is not initialized, it can be any legal value. Do not use variables or functions that are not defined in the program. Do not change the original program and assertion. 
+    Print the loop invariants in the following format:
 
     /*@
         loop invariant i1: ...;
@@ -236,9 +237,12 @@ def get_formalized_proof(previous_conversation):
     return prompt, get_closeai_answer(msgs)
 
 def check_proof(proof_response):
-    json_proof = re.findall(r'(?<=```json\s).*?(?=```)', proof_response, re.DOTALL)[0]
+    try:
+        json_proof = re.findall(r'(?<=```json\s).*?(?=```)', proof_response, re.DOTALL)[0]
+        json_proof = json.loads(json_proof)
+    except Exception as e:
+        return []
     
-    json_proof = json.loads(json_proof)
     wrong_implications = []
     for step, implications in json_proof.items():
         for implication in implications:
@@ -291,7 +295,10 @@ In the end, print the fixed loop invariants in the following format, where each 
 
 
 if __name__ == "__main__":
-    benchmark_file = "/home/tcli/loop-invariant-gen-experiments/test.c"
+    benchmark_file = sys.argv[1]
+    outputFileName = "_".join(benchmark_file.split("/")[3:])
+    outputFile = open(os.path.join("/home/tcli/loop-invariant-gen-experiments/logs", outputFileName + '.txt'), 'w')
+    sys.stdout = outputFile
     __success, annotation_blocks, checker_message = get_init_invariants(benchmark_file)
     benchmark = FramaCBenchmark(benchmark_file, benchmark_features, False)
     code = benchmark.get_code(benchmark_file)
@@ -325,8 +332,8 @@ if __name__ == "__main__":
             exit(0)
         
         
-        
-        print(f"{proof_prompt}\n{proof_response}")
+        print(f"================================Iteration: {iters} - Proof ================================")
+        print(f"{proof_prompt}\n\n{proof_response}")
         
         wrong_implications = check_proof(proof_response)
         print(wrong_implications)
@@ -338,11 +345,14 @@ if __name__ == "__main__":
             {"role": "assistant", "content": proof_response}
         ], wrong_implications, prepared_invariant, reason)
         
-        print(f"{repaired_prompt}\n{repaired_response}")
+        print(f"================================Iteration: {iters} - Repair ================================")
+        
+        print(f"{repaired_prompt}\n\n{repaired_response}")
         
         __success, annotation_blocks, checker_message = check_loop_invariants(benchmark_file, repaired_response)
         print(__success)
         print(checker_message)
+    outputFile.close()
     
         
     

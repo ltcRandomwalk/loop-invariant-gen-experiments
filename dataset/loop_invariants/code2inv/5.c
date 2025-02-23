@@ -7,7 +7,11 @@ int main()
     int x = 0;
     int size;
     int y, z;
-
+   /*@
+  loop invariant i1: x >= 0;
+  loop invariant i2: (x > 0) ==> (y <= z);
+  loop invariant i3: (x > 0) ==> (z <= y ==> (y == z));
+*/
     while(x < size) {
        x += 1;
        if( z <= y) {

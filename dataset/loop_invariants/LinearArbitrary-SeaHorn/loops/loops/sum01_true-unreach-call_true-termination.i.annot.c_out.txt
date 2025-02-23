@@ -3,85 +3,68 @@
 [kernel:annot:missing-spec] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c:6: Warning: 
   Neither code nor specification for function unknown_int, generating default assigns from the prototype
 [wp] Warning: Missing RTE guards
-[wp] 10 goals scheduled
-[wp] Proved goals:   10 / 10
-  Qed:               9
-  Alt-Ergo 2.4.3:    1 (11ms)
+[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c:13: Warning: 
+  Missing assigns clause (assigns 'everything' instead)
+[wp] 5 goals scheduled
+[wp] Proved goals:    5 / 5
+  Qed:               3
+  Alt-Ergo 2.4.3:    2 (5ms-6ms)
 ------------------------------------------------------------
   Function main
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 11):
-Prove: true.
-Prover Qed returns Valid (8ms)
+Goal Preservation of Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 10):
+Assume {
+  Type: is_sint32(i) /\ is_sint32(n) /\ is_sint32(n_1) /\ is_sint32(1 + i) /\
+      is_sint32((2 * i) - 2).
+  Have: n_1 <= 999.
+  Have: (-1000) <= n_1.
+  (* Invariant 'i1' *)
+  Have: (i = 1) \/ ((2 <= i) /\ (i <= (1 + n))).
+  (* Then *)
+  Have: i <= n.
+}
+Prove: (i = 0) \/ (0 < i).
+Prover Z3 4.12.2 returns Valid (Qed:5ms) (20ms) (26270)
+Prover CVC4 1.6 returns Valid (Qed:5ms) (30ms) (6965)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:5ms) (6ms) (29)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 11):
+Goal Establishment of Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 10):
 Prove: true.
-Prover Qed returns Valid (2ms)
+Prover Qed returns Valid (1ms)
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 12):
-Prove: true.
-Prover Qed returns Valid (5ms)
-
-------------------------------------------------------------
-
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 12):
-Prove: true.
-Prover Qed returns Valid (2ms)
-
-------------------------------------------------------------
-
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 13):
-Prove: true.
-Prover Qed returns Valid (5ms)
-
-------------------------------------------------------------
-
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 13):
+Goal Preservation of Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 11):
 Prove: true.
 Prover Qed returns Valid (2ms)
 
 ------------------------------------------------------------
 
-Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 21):
+Goal Establishment of Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 11):
+Prove: true.
+Prover Qed returns Valid (1ms)
+
+------------------------------------------------------------
+
+Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 17):
 Let x = 1 + n.
 Assume {
-  Type: is_sint32(i) /\ is_sint32(n) /\ is_sint32((2 * i) - 2).
-  Have: n <= 999.
-  Have: (-1000) <= n.
-  (* Invariant *)
-  Have: ((0 <= n) -> ((0 < i) /\ (i <= x))).
-  (* Invariant *)
-  Have: ((n < 0) -> (i = 1)).
+  Type: is_sint32(i) /\ is_sint32(n) /\ is_sint32(n_1) /\
+      is_sint32((2 * i) - 2).
+  Have: n_1 <= 999.
+  Have: (-1000) <= n_1.
+  (* Invariant 'i1' *)
+  Have: (i = 1) \/ ((2 <= i) /\ (i <= x)).
   (* Else *)
   Have: n < i.
 }
 Prove: (i = 1) \/ (x = i).
-Prover Z3 4.12.2 returns Valid (Qed:11ms) (30ms) (25870)
-Prover CVC4 1.6 returns Valid (Qed:11ms) (50ms) (6894)
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:11ms) (11ms) (28)
-
-------------------------------------------------------------
-
-Goal Loop assigns (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 14):
-Prove: true.
-Prover Qed returns Valid
-
-------------------------------------------------------------
-
-Goal Decreasing of Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 17):
-Prove: true.
-Prover Qed returns Valid (6ms)
-
-------------------------------------------------------------
-
-Goal Positivity of Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 17):
-Prove: true.
-Prover Qed returns Valid (5ms)
+Prover Z3 4.12.2 returns Valid (Qed:6ms) (20ms) (25898)
+Prover CVC4 1.6 returns Valid (Qed:6ms) (30ms) (6920)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:6ms) (5ms) (15)
 
 ------------------------------------------------------------
 [wp:pedantic-assigns] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c:4: Warning: 
@@ -1241,25 +1224,19 @@ Prover Qed returns Valid (5ms)
 --- Properties of Function 'main'
 --------------------------------------------------------------------------------
 
-[  Valid  ] Loop assigns (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 14)
+[  Valid  ] Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 10)
             by Wp.typed.
-[  Valid  ] Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 17)
+[  Valid  ] Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 11)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 11)
-            by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 12)
-            by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 13)
-            by Wp.typed.
-[  Valid  ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 21)
+[  Valid  ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c, line 17)
             by Wp.typed.
 
 --------------------------------------------------------------------------------
 --- Status Report Summary
 --------------------------------------------------------------------------------
-   109 Completely validated
+   106 Completely validated
    322 Considered valid
      3 To be validated
-   434 Total
+   431 Total
 --------------------------------------------------------------------------------
 [report] Dumping properties in '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c__output_dump.csv'

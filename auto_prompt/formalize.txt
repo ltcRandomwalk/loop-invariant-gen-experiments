@@ -1,0 +1,62 @@
+Now please formalize the above proof. I will give some rules to you, and your answer should strictly follow them. Here are the rules:
+1. We define a C logical expression with parentheses as a **predicate**. The C logical expression can contain “&&”, “||”, and “!”. For example, ( x >= 0 ), ( y == 2 ), (( x < y ) || ( z != 2 )) are all predicates. Besides, ( A ==> B ) is also a predicate, where A and B both predicates, meaning that A implies B.
+2. First, list the initial conditions. Each condition should be a predicate. 
+3. Next, split the whole proof into a sequence of proof goals. For each proof goal, first represent the goal as one predicate. Then give a proof step by step.
+4. You can split a proof goal into cases. For each case, first represent the case condition as one predicate. Then prove the goal step by step. You can use the case condition to derive conclusions. You should make sure that you consider all cases. (i.e. c_1 || c_2 || ... || c_k is always true, where c_i's are case conditions.)
+5. Proof goals and cases can be recursive. That is, for your convenience, you can split a goal or case into subgoals or subcases.
+6. Then, for each proof goal or case, represent the detailed steps of the proof by a sequence of clauses. The clauses should be in the form of **constrained horn clauses**. That is, H :- C, P_1, P_2, ... P_n, meaning that C, P_1, ... ,P_n can derive H. Its rules are as follows:
+   - C is the constraint (the case condition), represented by a predicate.
+   - P_1, ..., P_n are conditions. Each P_i should be a predicate. It must be in the initial conditions or a proof goal that has been proved, or is one of the conclusions in the previous clauses of the current proof goal or case. 
+   - H is the conclusion, represented by a predicate.
+   - Each clause should be a small step so that it can be checked by an SMT solver. For example, a legal clause is x == 100 :- x <= 100, x >= 100. 
+7. You can define new variables in a proof goal or case. Use ":=" to define variables, such as (x1 := x + 1). Every time you want to use a variable that not in the original statement, you should first define it. The assignment has nothing to do with the clauses. It is just a way to define new variables.
+8. Last, print the conclusion as a predicate. The conclusion should be one of the proof goals.
+
+Your answer should be a XML file in the following format. Do not explain.
+
+```xml
+<Proof>
+   <Initial_conditions>
+      <Predicate>A</Predicate>
+      <Predicate>B</Predicate>
+      ...
+   </Initial_conditions>
+
+   <Proof_goals>
+      <Goal goal=Y>
+            <Assignment>(x1 := x + 1)</Assignment>
+            <Clause>H :- Y1, Y2, ..., Ym</Clause>
+            ...
+      </Goal>
+      <Goal goal=Z>
+            <Case condition=C1>
+                  <Clause>H :- C1, Y1, ..., Ym</Clause>
+                   ...
+            </Case>
+            <Case condition=C2>
+                <Clause>H :- C2, Y1, ..., Ym</Clause>
+                ...
+            </Case>
+            ...
+      </Goal>
+      ...
+   </Proof_goals>
+
+   <Conclusion>
+      <Predicate>H</Predicate>
+   </Conclusion>
+</Proof>
+```
+
+Here is the explanation of the XML format:
+- The root element is `<Proof>`. It contains three elements: `<Initial_conditions>`, `<Proof_goals>`, and `<Conclusion>`.
+- The `<Initial_conditions>` element contains a list of `<Predicate>` elements. Each `<Predicate>` element represents an initial condition.
+- The `<Proof_goals>` element contains a sequence of `<Goal>` elements. Each `<Goal>` element represents a proof goal.
+- Each `<Goal>` element has an attribute `goal` that represents the goal as a predicate. The goal can contain new variables that defined in the `<Assignment>` elements of the same `<Goal>` element.
+- Each `<Goal>` element can contain a set of `<Case>` elements. Each `<Case>` element represents a case of the proof goal. The case condition is represented by the `condition` attribute as a predicate. In the `<Case>` element, the proof goal under a case condition should be proved.
+- Each `<Goal>` element and `<Case>` element can contain a sequence of `<Assignment>` elements and `<Clause>` elements. They represent the assignments and proof steps of the proof goal.
+- Each `<Assignment>` element represents a variable assignment. It should be in the form of `(x1 := x + 1)`, where x1 is a new variable and x is an existing variable.
+- Each `<Clause>` element represents a constrained horn clause. It should be in the form of `H :- C, P_1, P_2, ... P_n`, where H is the conclusion, C is the constraint (case condition), and P_1, ..., P_n are conditions. Each condition and the conclusion should be a predicate.
+- `<Goal>` and `<Case>` elements can also contain nested `<Goal>` and `<Case>` elements to represent subgoals and subcases.
+- The `<Conclusion>` element contains a single `<Predicate>` element that represents the conclusion.
+

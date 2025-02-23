@@ -1,0 +1,46 @@
+Consider the following C program and the assertions:
+
+```c
+#include <stdlib.h>
+#define assume(e) if(!(e)) exit(-1);
+extern int unknown(void);
+
+int main()
+{
+    int z1,z2,z3;
+    int x = 0;
+    int m = 0;
+    int n;
+
+    while (x < n) {
+        if (unknown()) {
+            m = x;
+        }
+        x = x + 1;
+    }
+
+    if(n > 0) {
+       
+       {;
+//@ assert(m >= 0);
+}
+
+    }
+}
+```
+   
+Consider the following loop invariants for the loop in the program: 
+
+/*@
+  loop invariant i1: ...;
+  loop invariant i2: ...;
+*/
+
+
+Please prove the establishment of the loop invariant (x == 0 ==> (y > 0 ==> x > 0) && (y <= 0 ==> x < 0)) . That is, (x == 0 ==> (y > 0 ==> x > 0) && (y <= 0 ==> x < 0))  holds before the loop. You should prove this goal in the following steps:
+1. First, list the initial conditions. In this case, the known conditions are: x * y >= 0. The proof goal is: (x == 0 ==> (y > 0 ==> x > 0) && (y <= 0 ==> x < 0)) holds before the loop.
+2. Prove the goal step by step. You can split the whol proof into a sequence of proof goals. For each proof goal, first briefly introduce the goal, and then prove it step by step.
+3. You can split a proof goal into cases. For each case, first introduce the case condition, then prove the goal step by step.
+4. Proof goals and cases can be recursive. That is, for your convenience, you can split a goal or case into subgoals or subcases.
+5. For each proof goal or case, prove the goal in detail.
+6. Last, output the conclusion.

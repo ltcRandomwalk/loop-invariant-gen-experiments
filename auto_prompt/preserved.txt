@@ -1,0 +1,9 @@
+Please prove the preservation of the loop invariant i == 0 || (i > 0 && i < 2*k). If the loop invariants i1, i2 hold before the loop, then after an iteration of the loop, the loop invariant  i == 0 || (i > 0 && i < 2*k) still holds. You should prove the goal in the following step:
+1. List initial conditions. In this task, the initial conditions are the loop invariants i1, i2, and the condition that enters the loop i < 2 * k. You can only use these conditions to complete the proof.
+2. Analyze the new value of the variables that after an iteration of the loop. You can use {v}_new to declare the new value. For example, use x_new to represent the new value of x.
+3. Prove that the loop invariant i == 0 || (i > 0 && i < 2*k) holds for the new values.
+4. Prove the goal step by step. You can split the whole proof into a sequence of proof goals. For each proof goal, first briefly introduce the goal, and then prove it step by step.
+5. You can split a proof goal into cases. For each case, first introduce the case condition, then prove the goal step by step.
+6. Proof goals and cases can be recursive. That is, for your convenience, you can split a goal or case into subgoals or subcases.
+7. For each proof goal or case, prove the goal in detail.
+8. Last, output the conclusion.

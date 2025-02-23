@@ -18,15 +18,11 @@ void main()
 return;
 
     j = 0;
-/*@ loop invariant j >= 0;                              // j is non-negative
-  @ loop invariant x + y == k;                         // x + y remains invariant
-  @ loop invariant (m == 0 || m <= j);                 // m starts at 0 and never exceeds j
-  @ loop invariant (n < 1 ==> j == 0 && m == 0);       // For n < 1, the loop doesn't run
-  @ loop invariant (n >= 1 ==> j <= n);                // For n >= 1, j stays within bounds
-  @ loop invariant (m == 0 || m < j);                  // If m != 0, it is strictly less than j
-  
-  @ loop variant n >= 0 ? n - j : 0;                   // Ensures termination for n >= 0
-  @*/
+/*@
+    loop invariant i1: j >= 0;
+    loop invariant i2: x + y == k;
+    loop invariant i3: (m == 0) || (m >= 0 && m < j);
+*/
     while(j<=n-1) {
       if(j==i)
       {

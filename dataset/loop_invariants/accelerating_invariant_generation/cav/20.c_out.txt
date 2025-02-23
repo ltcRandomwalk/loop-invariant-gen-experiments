@@ -1,207 +1,105 @@
 [kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c (with preprocessing)
 [wp] Running WP plugin...
 [wp] Warning: Missing RTE guards
-[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c:30: Warning: 
+[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c:26: Warning: 
   Missing assigns clause (assigns 'everything' instead)
-[wp] 15 goals scheduled
-[wp] [Timeout] typed_main_assert (Qed 22ms) (Z3)
-[wp] Proved goals:   14 / 15
-  Qed:              11
-  Alt-Ergo 2.4.3:    3 (12ms-17ms)
+[wp] 7 goals scheduled
+[wp] [Timeout] typed_main_assert (Qed 13ms) (Z3)
+[wp] Proved goals:    6 / 7
+  Qed:               4
+  Alt-Ergo 2.4.3:    2 (6ms-6ms)
   Timeout:           1
 ------------------------------------------------------------
   Function main
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 21):
+Goal Preservation of Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 22):
 Prove: true.
-Prover Qed returns Valid (10ms)
+Prover Qed returns Valid (7ms)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 21):
+Goal Establishment of Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 22):
 Prove: true.
-Prover Qed returns Valid (2ms)
+Prover Qed returns Valid (1ms)
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 22):
+Goal Preservation of Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 23):
 Let x_2 = x + y.
 Assume {
   Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(m) /\ is_sint32(n) /\
-      is_sint32(n_1) /\ is_sint32(x_1) /\ is_sint32(x) /\ is_sint32(y_1) /\
-      is_sint32(y) /\ is_sint32(1 + j) /\ is_sint32(x_2).
-  (* Invariant *)
-  Have: ((0 < n_1) -> (0 <= n_1)).
-  (* Invariant *)
+      is_sint32(x_1) /\ is_sint32(x) /\ is_sint32(y_1) /\ is_sint32(y) /\
+      is_sint32(1 + j) /\ is_sint32(x_2).
+  (* Invariant 'i1' *)
   Have: 0 <= j.
-  (* Invariant *)
-  Have: (m = 0) \/ (m <= j).
-  (* Invariant *)
-  Have: ((n <= 0) -> ((j = 0) /\ (m = 0))).
-  (* Invariant *)
-  Have: ((0 < n) -> (j <= n)).
-  (* Invariant *)
-  Have: (m = 0) \/ (m < j).
+  (* Invariant 'i3' *)
+  Have: (m = 0) \/ ((0 <= m) /\ (m < j)).
   (* Then *)
   Have: j < n.
   If j = i
   Then { Have: (1 + x) = x_1. Have: (1 + y_1) = y. }
   Else { Have: (1 + y) = y_1. Have: (1 + x_1) = x. }
-  (* Invariant *)
+  (* Invariant 'i1' *)
   Have: (-1) <= j.
 }
 Prove: x_2 = (x_1 + y_1).
-Prover Z3 4.12.2 returns Valid (Qed:23ms) (40ms) (29387)
-Prover CVC4 1.6 returns Valid (Qed:23ms) (60ms) (7688)
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:23ms) (16ms) (40)
+Prover Z3 4.12.2 returns Valid (Qed:17ms) (30ms) (28402)
+Prover CVC4 1.6 returns Valid (Qed:17ms) (40ms) (7331)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:17ms) (6ms) (38)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 22):
+Goal Establishment of Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 23):
 Prove: true.
-Prover Qed returns Valid (2ms)
+Prover Qed returns Valid (1ms)
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 23):
-Let x_2 = 1 + j.
+Goal Preservation of Invariant 'i3' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 24):
 Assume {
   Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(m) /\ is_sint32(n) /\
-      is_sint32(n_1) /\ is_sint32(x) /\ is_sint32(x_1) /\ is_sint32(y) /\
-      is_sint32(x_2).
-  (* Invariant *)
-  Have: ((0 < n_1) -> (0 <= n_1)).
-  (* Invariant *)
+      is_sint32(x) /\ is_sint32(x_1) /\ is_sint32(y) /\ is_sint32(1 + j).
+  (* Invariant 'i1' *)
   Have: 0 <= j.
-  (* Invariant *)
-  Have: (m = 0) \/ (m <= j).
-  (* Invariant *)
-  Have: ((n <= 0) -> ((j = 0) /\ (m = 0))).
-  (* Invariant *)
-  Have: ((0 < n) -> (j <= n)).
-  (* Invariant *)
-  Have: (m = 0) \/ (m < j).
+  (* Invariant 'i3' *)
+  Have: (m = 0) \/ ((0 <= m) /\ (m < j)).
   (* Then *)
   Have: j < n.
-  (* Invariant *)
+  (* Invariant 'i1' *)
   Have: (-1) <= j.
 }
-Prove: (m = 0) \/ (m <= x_2).
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:46ms) (12ms) (16)
+Prove: (m = 0) \/ ((m <= j) /\ (0 <= m)).
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:33ms) (6ms) (29)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 23):
+Goal Establishment of Invariant 'i3' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 24):
 Prove: true.
 Prover Qed returns Valid (2ms)
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 24):
-Prove: true.
-Prover Qed returns Valid (8ms)
-
-------------------------------------------------------------
-
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 24):
-Prove: true.
-Prover Qed returns Valid (2ms)
-
-------------------------------------------------------------
-
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 25):
-Prove: true.
-Prover Qed returns Valid (9ms)
-
-------------------------------------------------------------
-
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 25):
-Prove: true.
-Prover Qed returns Valid (2ms)
-
-------------------------------------------------------------
-
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 26):
-Prove: true.
-Prover Qed returns Valid (48ms)
-
-------------------------------------------------------------
-
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 26):
-Prove: true.
-Prover Qed returns Valid (2ms)
-
-------------------------------------------------------------
-
-Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 50):
+Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 46):
 Assume {
-  Type: is_sint32(j) /\ is_sint32(m) /\ is_sint32(n) /\ is_sint32(n_1).
+  Type: is_sint32(j) /\ is_sint32(m) /\ is_sint32(n).
   (* Residual *)
-  When: m < 0.
-  (* Invariant *)
-  Have: ((0 < n_1) -> (0 <= n_1)).
-  (* Invariant *)
+  When: 0 <= m.
+  (* Invariant 'i1' *)
   Have: 0 <= j.
-  (* Invariant *)
-  Have: m <= j.
-  (* Invariant *)
-  Have: j <= n.
-  (* Invariant *)
-  Have: m < j.
+  (* Invariant 'i3' *)
+  Have: (m = 0) \/ (m < j).
   (* Else *)
   Have: n <= j.
   (* Then *)
-  Have: 0 < j.
+  Have: 0 < n.
+  (* Then *)
+  Have: n <= m.
 }
 Prove: false.
-Prover Z3 4.12.2 returns Timeout (Qed:22ms) (3s)
-Prover CVC4 1.6 returns Unknown (Qed:22ms)
-Prover Alt-Ergo 2.4.3 returns Timeout (Qed:22ms) (3s)
-
-------------------------------------------------------------
-
-Goal Decreasing of Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 30):
-Let x_2 = 1 + j.
-Assume {
-  Type: is_sint32(i) /\ is_sint32(j) /\ is_sint32(m) /\ is_sint32(m_1) /\
-      is_sint32(n) /\ is_sint32(n_1) /\ is_sint32(tmp_0) /\ is_sint32(x) /\
-      is_sint32(x_1) /\ is_sint32(y) /\ is_sint32(x_2).
-  (* Invariant *)
-  Have: ((0 < n_1) -> (0 <= n_1)).
-  (* Invariant *)
-  Have: 0 <= j.
-  (* Invariant *)
-  Have: (m_1 = 0) \/ (m_1 <= j).
-  (* Invariant *)
-  Have: ((n <= 0) -> ((j = 0) /\ (m_1 = 0))).
-  (* Invariant *)
-  Have: ((0 < n) -> (j <= n)).
-  (* Invariant *)
-  Have: (m_1 = 0) \/ (m_1 < j).
-  (* Then *)
-  Have: j < n.
-  If tmp_0 != 0
-  Then { Have: m = j. }
-  Else { Have: m_1 = m. }
-  (* Invariant *)
-  Have: (-1) <= j.
-  (* Invariant *)
-  Have: (m = 0) \/ (m <= x_2).
-  (* Invariant *)
-  Have: ((n <= 0) -> ((j = (-1)) /\ (m = 0))).
-  (* Invariant *)
-  Have: (m = 0) \/ (m <= j).
-}
-Prove: if (0 <= n) then (n <= (j + (if (0 <= n) then (n - j) else 0)))
-       else (0 <= n).
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:57ms) (17ms) (48)
-
-------------------------------------------------------------
-
-Goal Positivity of Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 30):
-Prove: true.
-Prover Qed returns Valid (26ms)
+Prover Z3 4.12.2 returns Timeout (Qed:13ms) (3s)
+Prover CVC4 1.6 returns Unknown (Qed:13ms)
+Prover Alt-Ergo 2.4.3 returns Timeout (Qed:13ms) (3s)
 
 ------------------------------------------------------------
 [wp:pedantic-assigns] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c:5: Warning: 
@@ -1350,29 +1248,21 @@ Prover Qed returns Valid (26ms)
 --- Properties of Function 'main'
 --------------------------------------------------------------------------------
 
-[  Valid  ] Loop variant at loop (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 30)
+[  Valid  ] Invariant 'i1' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 22)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 21)
+[  Valid  ] Invariant 'i2' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 23)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 22)
+[  Valid  ] Invariant 'i3' (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 24)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 23)
-            by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 24)
-            by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 25)
-            by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 26)
-            by Wp.typed.
-[    -    ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 50)
+[    -    ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c, line 46)
             tried with Wp.typed.
 
 --------------------------------------------------------------------------------
 --- Status Report Summary
 --------------------------------------------------------------------------------
-   110 Completely validated
+   106 Completely validated
    322 Considered valid
      1 To be validated
-   433 Total
+   429 Total
 --------------------------------------------------------------------------------
 [report] Dumping properties in '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c__output_dump.csv'

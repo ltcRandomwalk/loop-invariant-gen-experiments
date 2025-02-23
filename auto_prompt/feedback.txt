@@ -1,0 +1,10 @@
+In your proof goal of 0 <= buf_new && buf_new < bufferlen, Your assignment buf_new := buf + 1 This means that the loop invariant i==1 **does not preserve after an iteration of the loop**.
+Please fix your loop invariants in the following steps:
+First, based on the error in your proof, analyze why you proposed the wrong invariant i == 1, which does not preserve after an iteration of the loop. 
+Then, from your analysis, carefully think about the verification problem again. Every time you propose a loop invariant, note that do not make the same mistake again.
+In the end, summarize the fixed loop invariants in the following format. Each invariant is a C logical expression, which can  contain "&&", "||" or "!". Besides, you can use implication ("==>") in the loop invariants. Note that, if a variable is not initialized, you cannot make any assumption on it. If certain variables are non-deterministic at the beginning or end of the loop, use an implication(==>) to make the invariant trivially true at that location. 
+
+/*@
+  loop invariant i1: ...;
+  loop invariant i2: ...;
+*/
