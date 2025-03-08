@@ -1,26 +1,36 @@
 #include <stdlib.h>
 #define assume(e) if(!(e)) exit(-1);
-
-extern int unknown1();
+extern int unknown_int(void);
 
 int main() {
-  int a = 0;
-  int j = unknown1();
-  int m = unknown1();
-  if(m<=0)
-    return 0;
+    unsigned int i,j,a,b;
+    int flag = unknown_int();
+    a = 0;
+    b = 0;
+    j = 1;
+    if (flag) {
+        i = 0;
+    } else {
+        i = 1;
+    }
 
-
-  for(j = 1; j <= m ; j++){
-    if(unknown1()) 
-       a++;
-    else
-       a--; 
-  }
-  {;
-//@ assert(a>=-m && a<=m);
+    while (unknown_int()) {
+        a++;
+        b += (j - i);
+        i += 2;
+        if (i%2 == 0) {
+            j += 2;
+        } else {
+            j++;
+        }
+    }
+    if (flag) {
+        {;
+//@ assert(a == b);
 }
 
+    }
+    return 0;
 }
     Please analyze the above C code and verify the assertions in it. 
     In order to verify the assertion, you need to propose loop invariants for the loop in the program. A loop invariant is a property that holds **before the loop**, and **after each iteration of the loop**. Besides, the loop invariants should be helpful to verify the assertion.

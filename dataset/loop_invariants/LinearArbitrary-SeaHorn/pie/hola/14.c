@@ -11,7 +11,10 @@ int main() {
   if(m<=0)
     return 0;
 
-
+/*@
+loop invariant i1: (a >= -j && a <= j);
+loop invariant i2: (j <= m);
+*/
   for(j = 1; j <= m ; j++){
     if(unknown1()) 
        a++;

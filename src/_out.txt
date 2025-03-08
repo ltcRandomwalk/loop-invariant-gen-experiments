@@ -1,9 +1,0 @@
-[wp] Running WP plugin...
-[kernel] Warning: no input file.
-[wp] Warning: No goal generated
-[wp] No proof obligations
-[report] Computing properties status...
---------------------------------------------------------------------------------
---- No status to report
---------------------------------------------------------------------------------
-[report] Dumping properties in '__output_dump.csv'
