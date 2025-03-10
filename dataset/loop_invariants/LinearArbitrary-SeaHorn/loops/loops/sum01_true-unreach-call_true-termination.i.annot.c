@@ -7,6 +7,7 @@ int main(){
   int i, n=unknown_int(), sn=0;
 assume(n < 1000 && n >= -1000);
 
+
   for(i=1; i<=n; i++){
     sn = sn +(2);
   }

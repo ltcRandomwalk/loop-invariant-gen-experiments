@@ -17,7 +17,7 @@ void main() {
     if( y <= 0 ) 
       if( 4 <= x ) 
 	{;
-//@ assert( x < 4 );
+//@ assert( x<4 );
 }
 
 }

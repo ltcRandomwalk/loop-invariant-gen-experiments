@@ -1,0 +1,5 @@
+Here are some instructions on step-by-step Structure for your proof:
+ - The whole proof contains three parts: initial conditions, proof process, and conclusion. Label them with `[Initial]`, `[Proof]`, and `[Conclusion]`, respectively.
+ - In the `[Proof]` part, label each step explicitly with the format:
+  `[STEP N: <STEP_NAME>]` where `N` is the step number and `<STEP_NAME>` describes the step.
+ - Under each step, provide detailed mathematical/logical reasoning.

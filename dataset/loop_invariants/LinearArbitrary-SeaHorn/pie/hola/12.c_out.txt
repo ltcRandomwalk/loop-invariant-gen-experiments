@@ -1,82 +1,105 @@
-[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c (with preprocessing)
-[kernel:typing:no-proto] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:9: Warning: 
+[kernel] Parsing dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c (with preprocessing)
+[kernel:typing:no-proto] dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:9: Warning: 
   Calling function unknown1 that is declared without prototype.
   Its formals will be inferred from actual arguments
 [wp] Running WP plugin...
-[kernel:annot:missing-spec] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:7: Warning: 
+[kernel:annot:missing-spec] dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:7: Warning: 
   Neither code nor specification for function unknown1, generating default assigns from the prototype
 [wp] Warning: Missing RTE guards
-[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:17: Warning: 
+[wp] dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:18: Warning: 
   Missing assigns clause (assigns 'everything' instead)
-[wp] 5 goals scheduled
-[wp] Proved goals:    5 / 5
-  Qed:               3
-  Alt-Ergo 2.4.3:    2 (5ms-6ms)
+[wp] 7 goals scheduled
+[wp] Proved goals:    7 / 7
+  Qed:               5
+  Alt-Ergo 2.4.3:    2 (6ms-9ms)
 ------------------------------------------------------------
   Function main
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 14):
+Goal Preservation of Invariant 'i1' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 14):
 Let x = 1 + j.
 Assume {
   Type: is_sint32(a) /\ is_sint32(j) /\ is_sint32(m) /\ is_sint32(m_1) /\
       is_sint32(a - 1) /\ is_sint32(x).
   (* Else *)
   Have: 0 < m_1.
-  (* Invariant *)
+  (* Invariant 'i1' *)
   Have: (a < j) /\ (0 < (a + j)).
-  (* Invariant *)
+  (* Invariant 'i2' *)
   Have: (0 < j) /\ (j <= (1 + m)).
+  (* Invariant 'i3' *)
+  Have: (a <= m) /\ (0 <= (a + m)).
   (* Then *)
   Have: j <= m.
 }
 Prove: a <= x.
-Prover Z3 4.12.2 returns Valid (Qed:19ms) (20ms) (26275)
-Prover CVC4 1.6 returns Valid (Qed:19ms) (30ms) (7056)
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:19ms) (5ms) (13)
+Prover Z3 4.12.2 returns Valid (Qed:21ms) (30ms) (26551)
+Prover CVC4 1.6 returns Valid (Qed:21ms) (30ms) (7168)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:21ms) (6ms) (15)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 14):
+Goal Establishment of Invariant 'i1' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 14):
 Prove: true.
 Prover Qed returns Valid (1ms)
 
 ------------------------------------------------------------
 
-Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 15):
+Goal Preservation of Invariant 'i2' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 15):
 Prove: true.
 Prover Qed returns Valid (6ms)
 
 ------------------------------------------------------------
 
-Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 15):
+Goal Establishment of Invariant 'i2' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 15):
 Prove: true.
 Prover Qed returns Valid (1ms)
 
 ------------------------------------------------------------
 
-Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 24):
+Goal Preservation of Invariant 'i3' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 16):
 Assume {
-  Type: is_sint32(a) /\ is_sint32(j) /\ is_sint32(m) /\ is_sint32(m_1).
+  Type: is_sint32(a) /\ is_sint32(a_1) /\ is_sint32(a_2) /\ is_sint32(a_3) /\
+      is_sint32(j) /\ is_sint32(m) /\ is_sint32(m_1) /\ is_sint32(tmp_1_0) /\
+      is_sint32(1 + j).
   (* Else *)
   Have: 0 < m_1.
-  (* Invariant *)
-  Have: (a < j) /\ (0 < (a + j)).
-  (* Invariant *)
+  (* Invariant 'i1' *)
+  Have: (a_3 < j) /\ (0 < (a_3 + j)).
+  (* Invariant 'i2' *)
   Have: (0 < j) /\ (j <= (1 + m)).
-  (* Else *)
-  Have: m < j.
+  (* Invariant 'i3' *)
+  Have: (a_3 <= m) /\ (0 <= (a_3 + m)).
+  (* Then *)
+  Have: j <= m.
+  If tmp_1_0 != 0
+  Then { Have: a_3 = a_1. Have: (1 + a_1) = a. }
+  Else { Have: a_3 = a_2. Have: (1 + a) = a_2. }
+  (* Invariant 'i1' *)
+  Have: (a <= j) /\ (0 <= (a + j)).
 }
 Prove: (a <= m) /\ (0 <= (a + m)).
-Prover Z3 4.12.2 returns Valid (Qed:4ms) (20ms) (26279)
-Prover CVC4 1.6 returns Valid (Qed:4ms) (30ms) (7073)
-Prover Alt-Ergo 2.4.3 returns Valid (Qed:4ms) (6ms) (28)
+Prover Z3 4.12.2 returns Valid (Qed:22ms) (30ms) (28585)
+Prover CVC4 1.6 returns Valid (Qed:22ms) (40ms) (7682)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:22ms) (9ms) (45)
 
 ------------------------------------------------------------
-[wp:pedantic-assigns] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:5: Warning: 
+
+Goal Establishment of Invariant 'i3' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 16):
+Prove: true.
+Prover Qed returns Valid (1ms)
+
+------------------------------------------------------------
+
+Goal Assertion (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 25):
+Prove: true.
+Prover Qed returns Valid (2ms)
+
+------------------------------------------------------------
+[wp:pedantic-assigns] dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:5: Warning: 
   No 'assigns' specification for function 'unknown1'.
   Callers assumptions might be imprecise.
-[wp:pedantic-assigns] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:7: Warning: 
+[wp:pedantic-assigns] dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c:7: Warning: 
   No 'assigns' specification for function 'main'.
   Callers assumptions might be imprecise.
 [report] Computing properties status...
@@ -1221,7 +1244,7 @@ Prover Alt-Ergo 2.4.3 returns Valid (Qed:4ms) (6ms) (28)
 
 [    -    ] Assigns nothing
             tried with Inferred annotations.
-[    -    ] Froms (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 5)
+[    -    ] Froms (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 5)
             tried with Inferred annotations.
 [    -    ] Default behavior
             tried with Frama-C kernel.
@@ -1230,19 +1253,21 @@ Prover Alt-Ergo 2.4.3 returns Valid (Qed:4ms) (6ms) (28)
 --- Properties of Function 'main'
 --------------------------------------------------------------------------------
 
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 14)
+[  Valid  ] Invariant 'i1' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 14)
             by Wp.typed.
-[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 15)
+[  Valid  ] Invariant 'i2' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 15)
             by Wp.typed.
-[  Valid  ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 24)
+[  Valid  ] Invariant 'i3' (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 16)
+            by Wp.typed.
+[  Valid  ] Assertion (file dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c, line 25)
             by Wp.typed.
 
 --------------------------------------------------------------------------------
 --- Status Report Summary
 --------------------------------------------------------------------------------
-   106 Completely validated
+   107 Completely validated
    322 Considered valid
      3 To be validated
-   431 Total
+   432 Total
 --------------------------------------------------------------------------------
-[report] Dumping properties in '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c__output_dump.csv'
+[report] Dumping properties in 'dataset/loop_invariants/LinearArbitrary-SeaHorn/pie/hola/12.c__output_dump.csv'

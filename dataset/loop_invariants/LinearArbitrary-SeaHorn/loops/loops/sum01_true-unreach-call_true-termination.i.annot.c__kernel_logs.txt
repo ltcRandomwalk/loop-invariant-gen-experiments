@@ -1,2 +1,3 @@
 [kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c (with preprocessing)
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c:11:[kernel:annot-error] warning: Assignment operators not allowed in annotations.
 /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/loops/loops/sum01_true-unreach-call_true-termination.i.annot.c:6:[kernel:annot:missing-spec] warning: Neither code nor specification for function unknown_int, generating default assigns from the prototype

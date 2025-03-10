@@ -1,0 +1,1 @@
+Please prove the assertion {assertion} using your proposed loop invariants step by step. You should prove the goal in the following steps: First, list the initial conditions. In this case, the initial conditions are conditions when the program executes to the assertion. This can be a loop invariant, or a branch condition, etc.. Then, prove the assertion {assertion} step by step.

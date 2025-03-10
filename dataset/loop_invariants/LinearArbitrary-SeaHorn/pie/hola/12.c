@@ -10,9 +10,10 @@ int main() {
   int m = unknown1();
   if(m<=0)
     return 0;
-/*@
-  loop invariant -j+1 <= a <= j-1;
-  loop invariant 1 <= j <= m + 1;
+/*@ 
+    loop invariant i1: - (j - 1) <= a && a <= (j - 1);
+    loop invariant i2: 1 <= j && j <= m + 1;
+    loop invariant i3: -m <= a && a <= m;
 */
   for(j = 1; j <= m ; j++){
     if(unknown1()) 

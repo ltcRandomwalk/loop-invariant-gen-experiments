@@ -1,37 +1,169 @@
 [kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c (with preprocessing)
-[kernel:annot-error] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c:13: Warning: 
-  unbound logic function \initial. Ignoring loop annotation
 [wp] Running WP plugin...
 [wp] Warning: Missing RTE guards
-[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c:19: Warning: 
+[wp] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c:17: Warning: 
   Missing assigns clause (assigns 'everything' instead)
-[wp] 1 goal scheduled
-[wp] [Timeout] typed_main_assert (Qed 3ms) (Z3)
-[wp] Proved goals:    0 / 1
-  Qed:             0 (3ms)
-  Timeout:         1
+[wp] 9 goals scheduled
+[wp] Proved goals:    9 / 9
+  Qed:               4
+  Alt-Ergo 2.4.3:    5 (4ms-6ms-7ms)
 ------------------------------------------------------------
   Function main
 ------------------------------------------------------------
 
-Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 27):
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 12):
+Prove: true.
+Prover Qed returns Valid (5ms)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 12):
+Prove: true.
+Prover Qed returns Valid (0.54ms)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 13):
+Prove: true.
+Prover Qed returns Valid (9ms)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 13):
+Prove: true.
+Prover Qed returns Valid (1ms)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 14):
+Let x_2 = 2 * y.
+Assume {
+  Type: is_sint32(BLAST_NONDET_0) /\ is_sint32(x) /\ is_sint32(x_1) /\
+      is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(2 + x) /\ is_sint32(2 + y).
+  Have: 0 <= x_1.
+  Have: x_1 <= 2.
+  Have: 0 <= y_1.
+  Have: y_1 <= 2.
+  (* Invariant *)
+  Have: x_1 <= (2 + (2 * y_1)).
+  (* Invariant *)
+  Have: y_1 <= (2 + (2 * x_1)).
+  (* Invariant *)
+  Have: 0 <= x.
+  (* Invariant *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: x <= (2 + x_2).
+  (* Invariant *)
+  Have: y <= (2 + (2 * x)).
+  (* Then *)
+  Have: BLAST_NONDET_0 != 0.
+  (* Invariant *)
+  Have: (-2) <= x.
+  (* Invariant *)
+  Have: (-2) <= y.
+}
+Prove: x <= (4 + x_2).
+Prover Z3 4.12.2 returns Valid (Qed:10ms) (20ms) (27363)
+Prover CVC4 1.6 returns Valid (Qed:10ms) (30ms) (7415)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:10ms) (7ms) (17)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 14):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y).
+  Have: 0 <= x.
+  Have: x <= 2.
+  Have: 0 <= y.
+  Have: y <= 2.
+}
+Prove: x <= (2 + (2 * y)).
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:2ms) (6ms) (20)
+
+------------------------------------------------------------
+
+Goal Preservation of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 15):
+Let x_2 = 2 * y.
+Let x_3 = 2 * x.
+Assume {
+  Type: is_sint32(BLAST_NONDET_0) /\ is_sint32(x) /\ is_sint32(x_1) /\
+      is_sint32(y) /\ is_sint32(y_1) /\ is_sint32(2 + x) /\ is_sint32(2 + y).
+  Have: 0 <= x_1.
+  Have: x_1 <= 2.
+  Have: 0 <= y_1.
+  Have: y_1 <= 2.
+  (* Invariant *)
+  Have: x_1 <= (2 + (2 * y_1)).
+  (* Invariant *)
+  Have: y_1 <= (2 + (2 * x_1)).
+  (* Invariant *)
+  Have: 0 <= x.
+  (* Invariant *)
+  Have: 0 <= y.
+  (* Invariant *)
+  Have: x <= (2 + x_2).
+  (* Invariant *)
+  Have: y <= (2 + x_3).
+  (* Then *)
+  Have: BLAST_NONDET_0 != 0.
+  (* Invariant *)
+  Have: (-2) <= x.
+  (* Invariant *)
+  Have: (-2) <= y.
+  (* Invariant *)
+  Have: x <= (4 + x_2).
+}
+Prove: y <= (4 + x_3).
+Prover Z3 4.12.2 returns Valid (Qed:10ms) (30ms) (27459)
+Prover CVC4 1.6 returns Valid (Qed:10ms) (40ms) (7463)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:10ms) (6ms) (19)
+
+------------------------------------------------------------
+
+Goal Establishment of Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 15):
+Assume {
+  Type: is_sint32(x) /\ is_sint32(y).
+  Have: 0 <= x.
+  Have: x <= 2.
+  Have: 0 <= y.
+  Have: y <= 2.
+  (* Invariant *)
+  Have: x <= (2 + (2 * y)).
+}
+Prove: y <= (2 + (2 * x)).
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:2ms) (7ms) (21)
+
+------------------------------------------------------------
+
+Goal Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 25):
 Assume {
   Type: is_sint32(x) /\ is_sint32(x_1) /\ is_sint32(y) /\ is_sint32(y_1).
   Have: 0 <= x_1.
   Have: x_1 <= 2.
   Have: 0 <= y_1.
   Have: y_1 <= 2.
-  (* Then *)
+  (* Invariant *)
+  Have: x_1 <= (2 + (2 * y_1)).
+  (* Invariant *)
+  Have: y_1 <= (2 + (2 * x_1)).
+  (* Invariant *)
+  Have: 0 <= x.
+  (* Invariant *)
   Have: 0 <= y.
+  (* Invariant *)
+  Have: x <= (2 + (2 * y)).
+  (* Invariant *)
+  Have: y <= (2 + (2 * x)).
   (* Then *)
   Have: y <= 0.
   (* Then *)
   Have: 4 <= x.
 }
 Prove: false.
-Prover Z3 4.12.2 returns Timeout (Qed:3ms) (3s)
-Prover CVC4 1.6 returns Unknown (Qed:3ms)
-Prover Alt-Ergo 2.4.3 returns Timeout (Qed:3ms) (3s)
+Prover Z3 4.12.2 returns Valid (Qed:4ms) (20ms) (26584)
+Prover CVC4 1.6 returns Valid (Qed:4ms) (30ms) (7199)
+Prover Alt-Ergo 2.4.3 returns Valid (Qed:4ms) (4ms) (27)
 
 ------------------------------------------------------------
 [wp:pedantic-assigns] /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c:6: Warning: 
@@ -1177,15 +1309,22 @@ Prover Alt-Ergo 2.4.3 returns Timeout (Qed:3ms) (3s)
 --- Properties of Function 'main'
 --------------------------------------------------------------------------------
 
-[    -    ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 27)
-            tried with Wp.typed.
+[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 12)
+            by Wp.typed.
+[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 13)
+            by Wp.typed.
+[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 14)
+            by Wp.typed.
+[  Valid  ] Invariant (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 15)
+            by Wp.typed.
+[  Valid  ] Assertion (file /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c, line 25)
+            by Wp.typed.
 
 --------------------------------------------------------------------------------
 --- Status Report Summary
 --------------------------------------------------------------------------------
-   103 Completely validated
+   108 Completely validated
    322 Considered valid
-     1 To be validated
-   426 Total
+   430 Total
 --------------------------------------------------------------------------------
 [report] Dumping properties in '/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c__output_dump.csv'

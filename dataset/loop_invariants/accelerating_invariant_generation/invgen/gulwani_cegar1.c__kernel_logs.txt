@@ -1,2 +1,1 @@
 [kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c (with preprocessing)
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen/gulwani_cegar1.c:13:[kernel:annot-error] warning: unbound logic function \initial. Ignoring loop annotation

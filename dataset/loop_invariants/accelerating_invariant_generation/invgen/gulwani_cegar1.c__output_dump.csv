@@ -1,5 +1,9 @@
 directory	file	line	function	property kind	status	property
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen	gulwani_cegar1.c	27	main	user assertion	Unknown	x < 4
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen	gulwani_cegar1.c	12	main	loop invariant	Valid	x >= 0
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen	gulwani_cegar1.c	13	main	loop invariant	Valid	y >= 0
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen	gulwani_cegar1.c	14	main	loop invariant	Valid	x <= 2 * y + 2
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen	gulwani_cegar1.c	15	main	loop invariant	Valid	y <= 2 * x + 2
+/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/invgen	gulwani_cegar1.c	25	main	user assertion	Valid	\false
 FRAMAC_SHARE/libc	stdlib.h	73	atof	from clause	Considered valid	assigns \result \from (indirect: nptr), (indirect: *(nptr + (0 ..)));
 FRAMAC_SHARE/libc	stdlib.h	75	atof	assigns clause	Considered valid	assigns \nothing;
 FRAMAC_SHARE/libc	stdlib.h	79	atoi	from clause	Considered valid	assigns \result \from (indirect: nptr), (indirect: *(nptr + (0 ..)));
