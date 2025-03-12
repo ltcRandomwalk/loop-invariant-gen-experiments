@@ -9,3 +9,8 @@ class Config():
     preservation_proof_template = os.path.join(prompt_dir, "preservation_proof.txt")
     assertion_proof_template = os.path.join(prompt_dir, "assertion_proof.txt")
     natural_proof_rules = os.path.join(prompt_dir, "natural_proof_rules.txt")
+    formalize_step_template = os.path.join(prompt_dir, "formalize_step.txt")
+    feedback_proof_template = os.path.join(prompt_dir, "feedback_proof.txt")
+    feedback_establishment_template = os.path.join(prompt_dir, "feedback_establishment.txt")
+    feedback_preservation_template = os.path.join(prompt_dir, "feedback_preservation.txt")
+    feedback_assertion_template = os.path.join(prompt_dir, "feedback_assertion.txt")

@@ -1,0 +1,14 @@
+This indicates that the loop invariants you proposed are all correct, but they are not sufficient to verify the assertion {assertion}. 
+
+Please fix your loop invariants in the following steps:
+First, based on the error in your proof, analyze why the loop invariant are not sufficient to verify the assertion {assertion}.
+Then, from your analysis, carefully think about the verification problem again. Every time you propose a loop invariant, note that do not make the same mistake again.
+
+Each loop invariant should be a C logical expression, which can contain "&&" and "||". Do not use variables or functions that are not declared in the program. Summarize the fixed loop invariants in the following format in the end of your response:
+
+```c 
+/*@ 
+    loop invariant i1: ...;
+    loop invariant i2: ...;
+    ...
+*/

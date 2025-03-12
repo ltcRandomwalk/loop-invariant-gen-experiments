@@ -1,0 +1,1 @@
+In your proof of {step}, "{comment}" is wrong. This is because the condition {condition} cannot derive {conclusion}.

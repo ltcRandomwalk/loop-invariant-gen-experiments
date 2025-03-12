@@ -13,6 +13,7 @@ Each loop invariant should be a C logical expression, which can contain "&&" and
 /*@ 
     loop invariant i1: ...;
     loop invariant i2: ...;
+    ...
 */
-...
+
 ```

@@ -1,3 +1,4 @@
+from enum import verify
 from urllib import response
 from frama_c import FramaCBenchmark, FramaCChecker
 from .Config import Config
@@ -6,6 +7,7 @@ import logging
 from .Prompt import Prompt
 from .LLM import CloseAILLM
 import re
+from .SMTSolver import verify_implication
 
 class StepProofVerifier():
     def __init__(self, benchmark_path):
@@ -62,6 +64,60 @@ class StepProofVerifier():
         self.chat_session = chat_history
         return response
 
+    
+    def getProofSteps(self, natrual_proof: str):
+        pattern = r'\[STEP \d+: .*?\]'
+
+        groups = re.findall(pattern, natrual_proof)
+        return groups
+    
+    
+
+    def checkNaturalProof(self, invariant_block, natural_proof, proof_steps):
+        code = self.benchmark.get_code(self.benchmark_path)
+        for step in proof_steps:
+            logging.info(f"Formalizing step {step}....")
+            formalization_prompt = Prompt.formalize_step_prompt(code, invariant_block, natural_proof, step)
+            formalized_proof, formalize_session = self.llm.get_response_by_prompt(formalization_prompt)
+            logging.info(formalized_proof)
+
+            wrong_implications = self.checkFormalizedProof(formalized_proof)
+            if wrong_implications:
+                return step, wrong_implications
+        return None, None
+
+
+    def checkFormalizedProof(self, formalized_proof):
+        wrong_implications = []
+        for line in formalized_proof.split('\n'):
+            logging.info(f"Checking line {line}...")
+            try:
+                if "==>" not in line:
+                    continue
+                if "//" in line:
+                    implication, comment = line.split("//")
+                else:
+                    implication, comment = line, ""
+                
+                P_c, Q_c = implication.split("==>")
+                is_valid, model = verify_implication(P_c, Q_c)
+                if not is_valid:
+                    wrong_implications.append({"condition": P_c, "conclusion": Q_c, "comment": comment})
+            except Exception as e:
+                logging.warning(repr(e))
+                continue
+        return wrong_implications
+    
+    def getFeedbackInvariants(self, invariant, type, step, wrong_implications):
+        prompt = Prompt.feedback_prompt(step, wrong_implications, invariant, type)
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session)
+        self.chat_session = chat_history
+        invariant_block = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)[-1]
+        return invariant_block
+
+
+
+
     def run(self):
         self.log_path = datetime.now().strftime(f"logs/StepProof_%m_%d_%H_%M_%S")
         logging.basicConfig(filename=self.log_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -104,13 +160,25 @@ class StepProofVerifier():
                 assert(False)
             logging.info(f"Get natural proof for the {type} of {invariant}")
             natural_proof = self.getNaturalProof(invariant, type)
-            # logging.info(self.llm.parse_session(self.chat_session))
-
+            logging.info(f"Natural Proof: {natural_proof}")
 
             ### 4. Formalize and check each step of the proof
+            proof_steps = self.getProofSteps(natural_proof)
+            logging.info(f"Found proof steps in natural language proof: {proof_steps}")
+
+            step, wrong_implications = self.checkNaturalProof(invariant_block, natural_proof, proof_steps)
+            logging.info(f"Wrong proof in step {step}: {wrong_implications}")
+            if not step:   # TODO: No error found in the proof.
+                continue
+
+            
+
 
 
             ### 5. Feedback and get fixed loop invariants
+            invariant_block = self.getFeedbackInvariants(invariant, type, step, wrong_implications)
+            logging.info(f"Fixed invariant block: {invariant_block}")
+
 
 
 
