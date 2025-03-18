@@ -7,7 +7,7 @@ import logging
 from .Prompt import Prompt
 from .LLM import CloseAILLM
 import re
-from .SMTSolver import verify_implication
+from .SMTSolver import verify_implication, is_valid_c_expression
 
 class StepProofVerifier():
     def __init__(self, benchmark_path):
@@ -30,8 +30,11 @@ class StepProofVerifier():
         response, chat_history = self.llm.get_response_by_prompt(prompt)
         self.chat_session += chat_history
         # Parsing invariants
-        invariant_block = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)[-1]
+        pattern = r'/\*@.*?\*/'
+        invariant_block = re.findall(pattern, response, re.DOTALL)[-1]
         return invariant_block
+        #invariant_block = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)[-1]
+        #return invariant_block
     
     def checkInvariants(self, invariant_block):
         checker_input_with_annotations = self.benchmark.combine_llm_outputs(
@@ -87,25 +90,53 @@ class StepProofVerifier():
         return None, None
 
 
-    def checkFormalizedProof(self, formalized_proof):
+    def checkFormalizedProof(self, formalized_proof: str):
         wrong_implications = []
+        known_conditions = []
+
+        extract_initial_conditions = False
+        check_implication = False
         for line in formalized_proof.split('\n'):
-            logging.info(f"Checking line {line}...")
-            try:
-                if "==>" not in line:
-                    continue
+            if "[Initial]" in line:   # Parse initial conditions
+                extract_initial_conditions = True
+            elif "[Proof]" in line:   # Begin checking implications
+                check_implication = True
+                extract_initial_conditions = False
+
+            if extract_initial_conditions:
+                line = line.strip()
                 if "//" in line:
-                    implication, comment = line.split("//")
-                else:
-                    implication, comment = line, ""
-                
-                P_c, Q_c = implication.split("==>")
-                is_valid, model = verify_implication(P_c, Q_c)
-                if not is_valid:
-                    wrong_implications.append({"condition": P_c, "conclusion": Q_c, "comment": comment})
-            except Exception as e:
-                logging.warning(repr(e))
+                    line = line.split("//")[0]
+                if is_valid_c_expression(line):
+                    known_conditions.append(line)
                 continue
+
+            if check_implication:
+                line = line.strip()
+
+                logging.info(f"Checking line {line}...")
+                try:
+                    if "==>" not in line:
+                        continue
+                    if "//" in line:
+                        implication, comment = line.split("//")
+                    else:
+                        implication, comment = line, ""
+                    
+                    P_c, Q_c = implication.split("==>")
+                    if "true" in P_c:
+                        known_conditions.append(Q_c)
+                        continue
+                    P_c_list = known_conditions + [ P_c ]
+                    known_conditions.append(Q_c)
+                    is_valid, model = verify_implication(P_c_list, Q_c)
+                    if not is_valid:
+                        wrong_implications.append({"condition": P_c, "conclusion": Q_c, "comment": comment})
+                    
+                except Exception as e:
+                    
+                    logging.warning(repr(e))
+                    continue
         return wrong_implications
     
     def getFeedbackInvariants(self, invariant, type, step, wrong_implications):

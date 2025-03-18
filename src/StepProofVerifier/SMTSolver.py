@@ -30,9 +30,10 @@ def create_smt_variables(variable_names):
     """为每个变量创建 SMT solver 的符号变量"""
     return {name: Int(name) for name in variable_names}
 
-def verify_implication(P_c, Q_c):
+def verify_implication(P_c_list, Q_c):
     """验证任意两个 C 表达式的蕴含关系 P -> Q"""
     # 提取变量
+    P_c = "&&".join([ '(' + expr + ')' for expr in P_c_list ])
     try:
         all_vars = extract_variables(P_c) | extract_variables(Q_c)
         variables = create_smt_variables(all_vars)

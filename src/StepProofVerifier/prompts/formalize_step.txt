@@ -13,14 +13,22 @@ Here is a part of the proof:
 
 {natural_proof}
 
-For the step {step} in the above proof, formalize its logical content into first-order logic expressions. Follow these rules:
+Please read the above proof for one goal. For the step {step} in the above proof, formalize its logical content into first-order logic expressions. Follow these rules:
 
 1. Focus only on {step}: Formalize **only** the step explicitly marked with {step}, and ignore other steps.
-2. Formalization requirements:
+2. List the known conditions before this step. The conditions include the initial conditions of the whole proof, and the conclusions that are derived from previous big steps.
+3. Formalization requirements:
     - Convert natural language claims into precise first-order logic formulas.
     - For each formula, represent it as an implication, using "==>" to represent.
-    - The condition and the conclusion of the implication should be legal C logical expressions.
+    - If a conclusion is derived from the program semantics, then just list "true" as the condition.
+    - The condition and the conclusion of the implication should be legal C logical expressions, i.e. it can only contain "&&", "||" and "!" as logic symbols.
     - Each formula should be self-contained so that it can be checked.
-3. Output format:
-    - Output one implication in each line, following by a comment starting with "//" which matches the claim in the natural language proof.
-    - Only output the implications and comments, do not explain.
+    - You do not need to verify the correctness of the proof, just formalize it in logic formulas.
+4. Output format:
+    - First, list the known conditions. This part begins with a `[Initial]` label, with one condition per line. Each condition should be a legal C logical expression.
+    - Then, output the formalized proof. This part begins with a `[Proof]` label, with one implication per line.
+    - Output one implication in each line, following by a comment starting with "//" which matches the claim in the natural language proof. For example: 
+      ```
+      (a <= 0) && (a == m) ==> (m <= 0) // From a is non-positive, and a is equal to m, we know that m is non-positive, too.
+      ```
+    - Only output the conditions, implications, and comments, do not explain.
