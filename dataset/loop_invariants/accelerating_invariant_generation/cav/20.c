@@ -18,11 +18,7 @@ void main()
 return;
 
     j = 0;
-/*@
-  loop invariant i1: x + y == k;
-  loop invariant i2: j >= 0;
-  loop invariant i3: (m == j ==> 0 <= m < n) || m == 0;
-*/
+
     while(j<=n-1) {
       if(j==i)
       {

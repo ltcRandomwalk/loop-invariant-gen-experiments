@@ -45,3 +45,28 @@ class CloseAILLM(LLM):
         return self.get_response_by_json(messages)
     
 
+class XMCPLLM(LLM):
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+
+    def get_response_by_json(self, messages: List) -> Tuple[str, List]:
+        client = OpenAI(
+            base_url='https://llm.xmcp.ltd/',
+            api_key=os.getenv("XMCP_API_KEY"),
+        )
+
+        chat_completion = client.chat.completions.create(
+            messages=messages,
+            model=self.model,
+        )
+
+        response = chat_completion.choices[0].message.content
+        chat_history = messages + [ {"role": "assistant", "content": response}]
+        
+        return response, chat_history
+    
+    def get_response_by_prompt(self, prompt, chat_history=[]) -> Tuple[str, List]:
+        messages = chat_history + [ {"role": "user", "content": prompt} ]
+        return self.get_response_by_json(messages)
+

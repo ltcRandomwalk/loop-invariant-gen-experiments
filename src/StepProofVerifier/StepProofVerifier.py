@@ -1,11 +1,12 @@
 from enum import verify
+from turtle import Turtle
 from urllib import response
 from frama_c import FramaCBenchmark, FramaCChecker
 from .Config import Config
 from datetime import datetime
 import logging
 from .Prompt import Prompt
-from .LLM import CloseAILLM
+from .LLM import CloseAILLM, XMCPLLM
 import re
 from .SMTSolver import verify_implication, is_valid_c_expression
 
@@ -16,8 +17,8 @@ class StepProofVerifier():
         self.benchmark_path = benchmark_path
         self.benchmark = FramaCBenchmark(benchmark_path, self.config.benchmark_features, False)
         
-        self.model = "gpt-4o-2024-11-20"
-        self.llm = CloseAILLM(self.model)
+        self.model = "closeai/gpt-4o"
+        self.llm = XMCPLLM(self.model)
         self.chat_session = []
         self.max_iter = 5
         self.benchmark_features = self.config.benchmark_features
@@ -96,18 +97,27 @@ class StepProofVerifier():
 
         extract_initial_conditions = False
         check_implication = False
+        check_conclusion = False
         for line in formalized_proof.split('\n'):
             if "[Initial]" in line:   # Parse initial conditions
                 extract_initial_conditions = True
+                continue
             elif "[Proof]" in line:   # Begin checking implications
                 check_implication = True
                 extract_initial_conditions = False
+                logging.info(f"Extracted initial conditions: {known_conditions}")
+                continue
+            elif "[Conclusion]" in line: # Begin checking conclusion
+                check_conclusion = True
+                check_implication = False
+                continue
+
 
             if extract_initial_conditions:
                 line = line.strip()
                 if "//" in line:
                     line = line.split("//")[0]
-                if is_valid_c_expression(line):
+                if is_valid_c_expression(line):       # A legal initial condition should not contain "true", and should not be a single value.
                     known_conditions.append(line)
                 continue
 
@@ -137,6 +147,10 @@ class StepProofVerifier():
                     
                     logging.warning(repr(e))
                     continue
+
+            if check_conclusion:
+                line = line.strip()
+                logging.info(f"Checking conclusion {line}...")  # TODO: how to check the conclusion
         return wrong_implications
     
     def getFeedbackInvariants(self, invariant, type, step, wrong_implications):
@@ -199,8 +213,8 @@ class StepProofVerifier():
 
             step, wrong_implications = self.checkNaturalProof(invariant_block, natural_proof, proof_steps)
             logging.info(f"Wrong proof in step {step}: {wrong_implications}")
-            if not step:   # TODO: No error found in the proof.
-                continue
+            #if not step:   # TODO: No error found in the proof.
+                #continue
 
             
 

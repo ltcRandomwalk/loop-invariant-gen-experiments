@@ -43,10 +43,11 @@ class Prompt():
     def feedback_prompt(step: str, implications: List[Dict], invariant: str, type: str):
         
         prompt = ""
-        for implication in implications:
-            condition, conclusion, comment = implication["condition"], implication["conclusion"], implication["comment"]
-            with open(Config.feedback_proof_template, 'r') as f:
-                prompt += f.read().format(step=step, condition=condition, conclusion=conclusion, comment=comment)
+        if implications:
+            for implication in implications:
+                condition, conclusion, comment = implication["condition"], implication["conclusion"], implication["comment"]
+                with open(Config.feedback_proof_template, 'r') as f:
+                    prompt += f.read().format(step=step, condition=condition, conclusion=conclusion, comment=comment)
             
         if type == "establishment":
             with open(Config.feedback_establishment_template, 'r') as f:

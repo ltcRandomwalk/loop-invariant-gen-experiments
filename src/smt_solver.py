@@ -74,7 +74,7 @@ def verify_implication(P_c, Q_c):
 
 # 示例：验证 i == 1 -> i <= n + 1
 if __name__ == "__main__":
-    P_c = "true "
+    P_c = "i  = 1 "
     Q_c = "i == 1"
 
     is_valid, counterexample = verify_implication(P_c, Q_c)

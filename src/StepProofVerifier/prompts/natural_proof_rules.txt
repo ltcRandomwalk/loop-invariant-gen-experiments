@@ -2,5 +2,6 @@ Here are some instructions on step-by-step Structure for your proof:
  - The whole proof contains three parts: initial conditions, proof process, and conclusion. Label them with `[Initial]`, `[Proof]`, and `[Conclusion]`, respectively.
  - In the `[Initial]` part, just list the initial conditions, do not perform any logical inference - leave them to the proof process.
  - In the `[Proof]` part, label each step explicitly with the format:
-  `[STEP N: <STEP_NAME>]` where `N` is the step number and `<STEP_NAME>` describes the step.
+  `[STEP N: <STEP_NAME>]` where `N` is the step number and `<STEP_NAME>` describes the step. Do not miss the left `[` and the right `]`.
  - Under each step, provide detailed mathematical/logical reasoning.
+ - Each step should be a sequential logical reasoning. For example, if a step contains subcases, please split them into different steps.

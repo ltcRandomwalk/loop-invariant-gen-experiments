@@ -140,10 +140,11 @@ def convert_c_assert_list_to_smtlib2(c_assert_statement_list):
 
 
 if __name__ == "__main__":
-    c_assert_statement_list = ['c is uninitialized;']
+    c_assert_statement_list = ['a =x=y ']
     
     for c_assert_statement in c_assert_statement_list:
         print(c_assert_statement)
+        c_assert_statement = re.sub(r'(?<!=)=(?!=)', '==', c_assert_statement)
         smtlib2_assert = convert_c_assert_to_smtlib2(c_assert_statement)
         print(smtlib2_assert)
         print("========================================================")

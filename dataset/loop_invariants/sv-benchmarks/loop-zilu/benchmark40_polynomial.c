@@ -11,12 +11,6 @@ int main() {
   int y = unknown_int();
   
   if (!(x*y>=0)) return 0;
-/*@
-  loop invariant x * y >= 0;
-  loop invariant (x == 0 ==> (y >= 0 || y <= 0));
-  loop invariant (x > 0 ==> y >= 0);
-  loop invariant (x < 0 ==> y <= 0);
-*/
   while (unknown_bool()) {
     if(x==0) {if (y>0) x++;
     else x--;} if(x>0) y++;
