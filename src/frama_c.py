@@ -12,6 +12,7 @@ from tree_sitter import Language, Parser
 from benchmark import Benchmark, InvalidBenchmarkException
 from checker import Checker
 from llm_utils import Logger
+import logging
 
 
 class FramaCChecker(Checker):
@@ -634,6 +635,54 @@ class FramaCBenchmark(Benchmark):
             raise InvalidBenchmarkException("Found loops")
 
         return code
+
+    
+    def combine_establishment_assertions(self, checker_input, assertions, features):
+        if not "one_loop_one_method" in features:
+            raise Exception("Not one loop one method.")
+        """
+        checker_input_ast = self.parser.parse(bytes(checker_input, "utf-8"))
+        root = checker_input_ast.root_node
+        loops = self.get_loops(root)
+        if self.is_interprocedural(checker_input):
+            assert "multiple_methods" in features, "Multiple methods found"
+        if len(loops) > 1:
+            assert "multiple_loops" in features, "Multiple loops found"
+        if self.uses_arrays(checker_input):
+            assert "arrays" in features, "Uses arrays"
+
+        labels = self.get_labels(checker_input)
+        annotations = None
+        """
+
+        # Remove all comments
+        comment_query = self.language.query(
+            """
+            (comment) @comment 
+            """
+        )
+        code = checker_input
+        ast = self.parser.parse(bytes(code, "utf-8"))
+        comments = comment_query.captures(ast.root_node)
+        comments = sorted(comments, key=lambda x: x[0].start_byte, reverse=True)
+        for comment in comments:
+            code = code[: comment[0].start_byte] + code[comment[0].end_byte :]
+        
+
+        loop = self.get_loops(self.get_main_definition(checker_input))
+        if len(loop) != 1:
+            raise Exception("No singular loop found while adding annotations")
+        loop = loop[0]
+        output = (
+            code[: loop.start_byte]
+            + "\n"
+            + "\n".join([ "//@ assert(" + assertion + ");" for assertion in assertions ])
+            + "\n"
+            + code[loop.start_byte :]
+        )
+
+        return output
+
 
     def combine_llm_outputs(self, checker_input, llm_outputs, features):
         checker_input_ast = self.parser.parse(bytes(checker_input, "utf-8"))

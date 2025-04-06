@@ -1,6 +1,4 @@
-from enum import verify
-from turtle import Turtle
-from urllib import response
+from typing import List
 from frama_c import FramaCBenchmark, FramaCChecker
 from .Config import Config
 from datetime import datetime
@@ -17,10 +15,10 @@ class StepProofVerifier():
         self.benchmark_path = benchmark_path
         self.benchmark = FramaCBenchmark(benchmark_path, self.config.benchmark_features, False)
         
-        self.model = "closeai/gpt-4o"
+        self.model = "volc/deepseek-v3-250324"
         self.llm = XMCPLLM(self.model)
         self.chat_session = []
-        self.max_iter = 5
+        self.max_iter = 10
         self.benchmark_features = self.config.benchmark_features
         
 
@@ -77,7 +75,7 @@ class StepProofVerifier():
     
     
 
-    def checkNaturalProof(self, invariant_block, natural_proof, proof_steps):
+    def checkNaturalProof(self, invariant_block, natural_proof, proof_steps, type, loop_invariant):
         code = self.benchmark.get_code(self.benchmark_path)
         for step in proof_steps:
             logging.info(f"Formalizing step {step}....")
@@ -85,24 +83,61 @@ class StepProofVerifier():
             formalized_proof, formalize_session = self.llm.get_response_by_prompt(formalization_prompt)
             logging.info(formalized_proof)
 
-            wrong_implications = self.checkFormalizedProof(formalized_proof)
-            if wrong_implications:
-                return step, wrong_implications
+            errors_in_proof = self.checkFormalizedProof(formalized_proof, type, loop_invariant)
+            if errors_in_proof:
+                return step, errors_in_proof
         return None, None
+    
+
+    def checkInitialConditions(self, initial_conditions, type) -> List[str]:
+        """
+        Return initial conditions that are not valid.
+        """
+        if type != "establishment":
+            raise Exception("Check initial conditions for cases that are not establishment.")
+        
+        code = self.benchmark.get_code(self.benchmark_path)
+        checker_input_with_initial_conditions = self.benchmark.combine_establishment_assertions(
+            code, initial_conditions, self.benchmark_features
+        )
+
+        logging.info(f"Checker input with initial conditions: {checker_input_with_initial_conditions}")
+
+        __success, checker_message = self.checker.check(
+            checker_input_with_initial_conditions,
+            check_variant=False,
+            check_contracts=False,
+        )
+
+        _, _, not_valid_assertions = self.parse_framac_output(checker_message)
+
+        return not_valid_assertions
 
 
-    def checkFormalizedProof(self, formalized_proof: str):
+
+
+    def checkFormalizedProof(self, formalized_proof: str, type: str, loop_invariant: str):
         wrong_implications = []
         known_conditions = []
+        errors_in_proof = []
+        initial_conditions = []   # Just used to check whether the initial conditions are correct.
+        wrong_conditions = []
 
         extract_initial_conditions = False
         check_implication = False
         check_conclusion = False
         for line in formalized_proof.split('\n'):
-            if "[Initial]" in line:   # Parse initial conditions
+            if "[Initial]" in line:   # Being parsing initial conditions
                 extract_initial_conditions = True
                 continue
             elif "[Proof]" in line:   # Begin checking implications
+                if type == "establishment":    # TODO: For other types of proof goal, how to check initial conditions?
+                    incorrect_initials = self.checkInitialConditions(initial_conditions, type)
+                    logging.info(f"Incorrect initial conditions: {incorrect_initials}")
+                    for initial in incorrect_initials:
+                        errors_in_proof.append({"type": "initial", "condition": initial})
+
+
                 check_implication = True
                 extract_initial_conditions = False
                 logging.info(f"Extracted initial conditions: {known_conditions}")
@@ -115,10 +150,14 @@ class StepProofVerifier():
 
             if extract_initial_conditions:
                 line = line.strip()
+                condition = ""
                 if "//" in line:
-                    line = line.split("//")[0]
-                if is_valid_c_expression(line):       # A legal initial condition should not contain "true", and should not be a single value.
-                    known_conditions.append(line)
+                    condition = line.split("//")[0].strip()
+                    comment = line.split("//")[-1].strip()
+                if is_valid_c_expression(condition):       # TODO: A legal initial condition should not contain "true", and should not be a single value.
+                    known_conditions.append(condition)
+                    if comment.lower() == "initial":
+                        initial_conditions.append(condition)
                 continue
 
             if check_implication:
@@ -137,9 +176,14 @@ class StepProofVerifier():
                     if "true" in P_c:
                         known_conditions.append(Q_c)
                         continue
+
+                    is_valid, model = verify_implication(known_conditions, P_c)   # Check whether the conditions are used correctly.
+                    if not is_valid:
+                        wrong_conditions.append({"condition": P_c, "conclusion": Q_c, "comment": comment})
+
                     P_c_list = known_conditions + [ P_c ]
                     known_conditions.append(Q_c)
-                    is_valid, model = verify_implication(P_c_list, Q_c)
+                    is_valid, model = verify_implication(P_c_list, Q_c)     # Check whether the implication is correct.
                     if not is_valid:
                         wrong_implications.append({"condition": P_c, "conclusion": Q_c, "comment": comment})
                     
@@ -151,14 +195,31 @@ class StepProofVerifier():
             if check_conclusion:
                 line = line.strip()
                 logging.info(f"Checking conclusion {line}...")  # TODO: how to check the conclusion
-        return wrong_implications
+
+
+        for implication in wrong_conditions:
+            errors_in_proof.append({"type": "implication:condition", "content": implication})
+        for implication in wrong_implications:
+            errors_in_proof.append({"type": "implication:conclusion", "content": implication})
+        return errors_in_proof
     
-    def getFeedbackInvariants(self, invariant, type, step, wrong_implications):
-        prompt = Prompt.feedback_prompt(step, wrong_implications, invariant, type)
+    def getFeedbackInvariants(self, invariant, type, step, errors_in_proof):
+        prompt = Prompt.feedback_prompt(step, errors_in_proof, invariant, type)
         response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session)
         self.chat_session = chat_history
-        invariant_block = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)[-1]
-        return invariant_block
+        invariant_blocks = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)
+        if not invariant_blocks:
+            return ""
+        return invariant_blocks[-1]
+    
+    def getSyntaxErrorInvariants(self):
+        prompt = Prompt.syntax_feedback_prompt()
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session)
+        self.chat_session = chat_history
+        invariant_blocks = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)
+        if not invariant_blocks:
+            return ""
+        return invariant_blocks[-1]
 
 
 
@@ -201,8 +262,11 @@ class StepProofVerifier():
                 invariant, type = not_preserved_invariants[0], "preservation"
             elif not_valid_assertions:
                 invariant, type = not_valid_assertions[0], "assertion"
-            else:
-                assert(False)
+            else:      # Syntax Error
+                # assert(False)
+                invariant_block = self.getSyntaxErrorInvariants()
+                logging.info(f"Syntax Error. Fixed invariant block: {invariant_block}")
+                continue
             logging.info(f"Get natural proof for the {type} of {invariant}")
             natural_proof = self.getNaturalProof(invariant, type)
             logging.info(f"Natural Proof: {natural_proof}")
@@ -211,8 +275,8 @@ class StepProofVerifier():
             proof_steps = self.getProofSteps(natural_proof)
             logging.info(f"Found proof steps in natural language proof: {proof_steps}")
 
-            step, wrong_implications = self.checkNaturalProof(invariant_block, natural_proof, proof_steps)
-            logging.info(f"Wrong proof in step {step}: {wrong_implications}")
+            step, errors_in_proof = self.checkNaturalProof(invariant_block, natural_proof, proof_steps, type, invariant)
+            logging.info(f"Wrong proof in step {step}: {errors_in_proof}")
             #if not step:   # TODO: No error found in the proof.
                 #continue
 
@@ -221,7 +285,7 @@ class StepProofVerifier():
 
 
             ### 5. Feedback and get fixed loop invariants
-            invariant_block = self.getFeedbackInvariants(invariant, type, step, wrong_implications)
+            invariant_block = self.getFeedbackInvariants(invariant, type, step, errors_in_proof)
             logging.info(f"Fixed invariant block: {invariant_block}")
 
 

@@ -14,3 +14,4 @@ class Config():
     feedback_establishment_template = os.path.join(prompt_dir, "feedback_establishment.txt")
     feedback_preservation_template = os.path.join(prompt_dir, "feedback_preservation.txt")
     feedback_assertion_template = os.path.join(prompt_dir, "feedback_assertion.txt")
+    syntax_feedback_template = os.path.join(prompt_dir, "syntax_feedback.txt")

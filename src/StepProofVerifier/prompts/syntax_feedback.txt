@@ -1,0 +1,15 @@
+The loop invariants you proposed have some syntax errors. Please fix the syntax errors and propose the loop invariants again. Here are some typical rules that you should follow:
+1. The loop invariant must be a legal C logical expression. It can contain "&&", "||", and "!". Do not use any natural language in the loop invariant.
+2. You can only use variables that are declared in the original program. It cannot contain functions. 
+3. Follow the output format exactly.
+
+Summarize the loop invariants in the following format in the end of your response:
+
+```c 
+/*@ 
+    loop invariant i1: ...;
+    loop invariant i2: ...;
+    ...
+*/
+
+```

@@ -7,7 +7,7 @@ In order to verify the assertions, you need to propose loop invariants for the l
 
 Besides, the loop invariant should be helpful to verify the assertions.
 
-Each loop invariant should be a C logical expression, which can contain "&&" and "||". Do not use variables or functions that are not declared in the program. Summarize the loop invariants in the following format in the end of your response:
+Each loop invariant should be a C logical expression, which can contain "&&", "||" and "!". Besides, the loop invariant should only contain variables that are declared in the program. It cannot contain any function. Summarize the loop invariants in the following format in the end of your response:
 
 ```c 
 /*@ 
