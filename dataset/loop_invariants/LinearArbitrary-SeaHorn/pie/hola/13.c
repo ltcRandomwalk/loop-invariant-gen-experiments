@@ -13,9 +13,7 @@ int main() {
 
    int flag = unknown2();
 
-  /*@
-     loop invariant j == 2 * k + 2;
-  */
+  
    while(unknown1()){ 
      if (flag)
        j = j + 4;

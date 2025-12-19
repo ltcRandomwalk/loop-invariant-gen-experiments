@@ -1,0 +1,16 @@
+This indicates that the loop invariant {invariant} is actually not established. **That is, {invariant} does not hold before the loop.**
+
+Please fix your loop invariants in the following steps:
+First, based on the error in your proof, analyze why the loop invariant {invariant} does not hold before the loop.
+Then, from your analysis, carefully think about the verification problem again. Every time you propose a loop invariant, note that do not make the same mistake again.
+
+In the end, print loop invariants as valid C assertions that help prove the assertion. 
+In order to get a correct answer, You may want to consider both the situation of not entering the loop and the situation of jumping out of the loop. 
+If some of the preconditions are also loop invariant, you need to add them to your answer as well. 
+Use '&&' or '||' if necessary. Your answer should follow the following format:
+
+```c 
+    assert(...);
+    assert(...);
+    ...
+```

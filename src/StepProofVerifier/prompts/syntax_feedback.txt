@@ -5,11 +5,9 @@ The loop invariants you proposed have some syntax errors. Please fix the syntax 
 
 Summarize the loop invariants in the following format in the end of your response:
 
-```c 
-/*@ 
-    loop invariant i1: ...;
-    loop invariant i2: ...;
-    ...
-*/
 
+```c 
+    assert(...);
+    assert(...);
+    ...
 ```

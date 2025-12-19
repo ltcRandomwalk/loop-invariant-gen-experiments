@@ -5,4 +5,5 @@ import sys
 if __name__ == "__main__":
     benchmark_path = sys.argv[1]
     verifier = StepProofVerifier(benchmark_path)
-    verifier.run()
+    result = verifier.runWithShortenTokens()
+    print(result)

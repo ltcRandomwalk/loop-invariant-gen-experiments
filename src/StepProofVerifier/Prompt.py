@@ -40,6 +40,13 @@ class Prompt():
         return template.format(code=code, invariant_block=invariant_block, natural_proof=natural_proof, step=step)
     
     @staticmethod
+    def formalize_whole_prompt(code, invariant_block, natural_proof):
+        with open(Config.formalize_whole_template, 'r') as f:
+            template = f.read()
+        return template.format(code=code, invariant_block=invariant_block, natural_proof=natural_proof)
+
+
+    @staticmethod
     def feedback_prompt(step: str, proof_errors: List[Dict], invariant: str, type: str):
         
         prompt = ""
@@ -78,3 +85,10 @@ class Prompt():
         with open(Config.syntax_feedback_template, 'r') as f:
             template = f.read()
         return template
+    
+
+    @staticmethod
+    def new_session_natural_proof_prompt(code: str, invariant_block: str):
+        with open(Config.new_session_natural_proof_template, 'r') as f:
+            template = f.read()
+        return template.format(code=code, invariant_block=invariant_block)

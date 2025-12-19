@@ -35,6 +35,8 @@ int main()
   glob3_pattern_off = pattern_off;
 
   glob3_dc = 0;
+
+ 
   for (;;)
     if (glob3_pathend_off + glob3_dc >= glob3_pathlim_off) break;
     else {

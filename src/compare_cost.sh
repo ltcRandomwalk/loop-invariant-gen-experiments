@@ -1,0 +1,1 @@
+python3 compare_result.py --loris_json /home/tcli/loop-invariant-gen-experiments/src/logs/o4mini/aggregated_results.json --lam_dir /home/tcli/LaM4Inv/Result/GPTo4mini --benchmarks /home/tcli/loop-invariant-gen-experiments/experiments/finalbenchmark.txt --out_dir /home/tcli/loop-invariant-gen-experiments/results --x_metric time

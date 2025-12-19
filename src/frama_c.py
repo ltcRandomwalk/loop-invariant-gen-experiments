@@ -28,6 +28,7 @@ class FramaCChecker(Checker):
         input,
         check_variant=False,
         check_contracts=False,
+        timeout=0
     ):
         """
         Returns True only if all annotations are valid, False otherwise.
@@ -50,7 +51,10 @@ class FramaCChecker(Checker):
         with open(temp_c_file, "w") as f:
             f.write(input)
 
-        cmd = f"frama-c -wp -wp-verbose 100 -wp-debug 100 -wp-timeout {self.timeout} \
+        if timeout == 0:
+            timeout = self.timeout
+
+        cmd = f"frama-c -wp -wp-verbose 100 -wp-debug 100 -wp-timeout {timeout} \
                 -wp-prover=alt-ergo,z3,cvc4 {temp_c_file} -wp-report-json {temp_wp_json_report_file} -kernel-warn-key annot-error=active \
                 -kernel-log a:{temp_kernel_log_file} -then -no-unicode -report -report-csv {temp_output_dump_file}"
         p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)

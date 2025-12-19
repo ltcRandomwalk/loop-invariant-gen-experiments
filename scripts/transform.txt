@@ -1,0 +1,110 @@
+I will provide a C code for you. The C code contains a loop, and an assertion to verify. You need to transform the format of the C code, without changing the semantics. Here are some rules of the format:
+
+1. You should first extract the pre-condition before the loop. For variable assignments, just use assignment to express it. For other pre-conditions, like 0 <= x <= 100, put them in an assume function. (e.g. assume(x >= 0 && x <= 100);)
+2. Transform the loop to a while loop, and make sure the semantics do not change.
+3. The original program may contains assertions expressed as comments. You should transform them into an assert function in the program. 
+4. It's ok to include functions named "unknown".
+
+Here are some examples for the format transformation:
+
+Example 1:
+
+Original program:
+
+#include <stdlib.h>
+#define assume(e) if(!(e)) exit(-1);
+extern int unknown_int(void);
+
+#include <assert.h>
+
+int main() {
+  int j = unknown_int();
+  int k = unknown_int();
+  int n = unknown_int();
+  if (!((j==0) && (k==n) && (n>0))) return 0;
+
+  while (j<n && n>0) {
+    j++;k--;
+  }
+  {;
+//@ assert((k == 0));
+}
+
+  return 0;
+}
+
+
+Transformed Result:
+
+int main(){
+    int i;
+    int k;
+    int n;
+
+    //pre-condition
+    i = 0;
+    assume(n > 0);
+    k = n;
+
+    //loop-body
+    while (i < n && n > 0) {
+        k--;
+        i++;
+    }
+
+    //post-condition
+    assert(k == 0);
+}
+
+--- 
+
+Example 2:
+
+Original program:
+
+#include <stdlib.h>
+#define assume(e) if(!(e)) exit(-1);
+extern int unknown_int(void);
+extern _Bool unknown_bool(void);
+
+#include <assert.h>
+
+int main() {
+  int x = unknown_int();
+  int y = unknown_int();
+  int t = unknown_int();
+  
+  if (!(x!=y && y==t)) return 0;
+  while (unknown_bool()) {
+    if(x>0) y=y+x;
+  }
+  {;
+//@ assert(y>=t);
+}
+
+  return 0;
+}
+
+Transformed Result:
+
+int main(){
+    int x;
+    int y;
+    int t;
+
+    //pre-condition
+    y = t; 
+    assume(x != y);
+
+    //loop-body
+    while (unknown()) {
+        if(x > 0)
+            y = y + x;
+    }
+
+    //post-condition
+    assert(y >= t);
+}
+
+---
+

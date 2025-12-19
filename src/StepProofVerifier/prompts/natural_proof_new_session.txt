@@ -1,0 +1,10 @@
+{code}
+
+Above is a C code with some assertions to prove.
+In order to prove the assertions, you previously proposed the following loop invariants:
+
+```c
+{invariant_block}
+```
+
+Note that a loop invariant is a C assertion that holds before the loop, and after each iteration of the loop.

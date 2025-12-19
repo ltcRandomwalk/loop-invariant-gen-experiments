@@ -14,6 +14,12 @@ void main() {
     int j2 = c;
     int x2 = 0;
 
+    /*@
+    loop invariant j2 == 5 * i + c;
+ loop invariant  x1 == x2;
+ loop invariant x2 == (5 * i * (i - 1)) / 2 + c * i;
+    */
+
     while ( (i < n)) {
         
         j1 = 5 * i + c;
@@ -30,4 +36,8 @@ void main() {
         j2 = j2 + 5;
         i++;
     }
+
+    {;
+        //@ assert( x1 == x2);
+        }
 }

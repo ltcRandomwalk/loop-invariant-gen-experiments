@@ -1,0 +1,49 @@
+Here is a C program, with some assertions to verify:
+
+```c
+{code}
+```
+
+To verify the assertion, here are the proposed loop invariants for the loop in the program:
+```c
+{invariant_block}
+```
+
+Here is a part of the proof:
+
+{natural_proof}
+
+---
+
+Please read the above proof for one certain goal. For each step marked with [STEP N: ...] in the above proof, formalize its logical content into first-order logic expressions. Follow these rules:
+
+1. When formalizing a certain step, focus on it. Formalize **only** the certain step, and ignore other steps.
+2. List the known conditions before this step. Each condition should be a logical expression represented in C grammar. The detailed known conditions are listed as follows:
+    - The initial conditions.
+    - The conclusions that derived from previous big steps.
+    - If this step needs declare a new variable, list it here using "==" symbol.
+3. Formalization requirements:
+    - Convert natural language claims into precise first-order logic formulas.
+    - For each formula, represent it as an implication, using "==>" to represent.
+    - The condition and the conclusion of the implication should be legal C logical expressions, i.e. it can only contain "&&", "||" and "!" as logic operators.
+    - Each formula should be self-contained so that it can be checked.
+    - You do not need to verify the correctness of the proof, just formalize it in logic formulas.
+    - At last, summarize the conclusion of this step using a C logical expression. **Here, the conclusion means the one that are actually derived from this step, not the one that need to be derived.**
+
+---
+
+Output format:
+    - For each step marked with [STEP N: ...], first output the step label in one line. It should be the same as the label in the natural proof. Then, output the formalization of this step in the following format.
+    - First, list the known conditions. This part begins with a `[Initial]` label, with one condition per line. Each condition should be a legal C logical expression.　Each condition follows by a comment starting with "//". Follow the following rules for comments:
+        1. If the condition comes from initial conditions, comment "initial".
+        2. If the condition comes from conclusions derived by previous big steps, comment "derived".
+        3. If the condition is a declaration of a new variable, comment "declaration".
+        4. Comment a single word for each condition.
+    - Then, output the formalized proof. This part begins with a `[Proof]` label, with one implication per line.
+    - Output one implication in each line, following by a comment starting with "//" which matches the claim in the natural language proof. The condition and conclusion must be legal C logical expressions. For example: 
+      ```
+      (a <= 0) && (a == m) ==> (m <= 0) // From a is non-positive, and a is equal to m, we know that m is non-positive, too.
+      ```
+    - At last, output the conclusion of this step. This part begins with a `[Conclusion]` label. The conclusion stays within one line, with exactly one C logical expression. Similar to the above, represent the explanation to the conclusion in a comment starting with "//".
+    - Only output the conditions, implications, conclusions,  and comments, do not explain.
+    - For all C logical expressions mentioned above, do not use functions in it.

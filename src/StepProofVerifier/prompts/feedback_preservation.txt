@@ -4,7 +4,7 @@ Please fix your loop invariants in the following steps:
 First, based on the error in your proof, analyze why the loop invariant {invariant} is not preserved.
 Then, from your analysis, carefully think about the verification problem again. Every time you propose a loop invariant, note that do not make the same mistake again.
 
-Each loop invariant should be a C logical expression, which can contain "&&" and "||". Do not use variables or functions that are not declared in the program. Summarize the fixed loop invariants in the following format in the end of your response:
+The loop invariant should strictly follow the grammar of C logical expressions. It can contain "&&", "||" and "!". Besides, the loop invariant should only contain variables that are declared in the program. It cannot contain any function or any other notations. Summarize the fixed loop invariants in the following format in the end of your response:
 
 ```c 
 /*@ 

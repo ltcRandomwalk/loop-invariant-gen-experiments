@@ -33,7 +33,7 @@ return;
   if(m > n-1)
     
 return;
-
+  
   while(x<=n-1) {
     x++;
     if(x>=m+1) y++;
@@ -42,6 +42,7 @@ return;
 
     x = x;
   }
+
   if(x < n)
     
 return;

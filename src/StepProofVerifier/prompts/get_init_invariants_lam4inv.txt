@@ -1,0 +1,12 @@
+{code}
+
+Print loop invariants as valid C assertions that help prove the assertion. 
+In order to get a correct answer, You may want to consider both the situation of not entering the loop and the situation of jumping out of the loop. 
+If some of the preconditions are also loop invariant, you need to add them to your answer as well. 
+Use '&&' or '||' if necessary. Don't explain. Your answer should follow the following format:
+
+```c 
+    assert(...);
+    assert(...);
+    ...
+```

@@ -1,0 +1,3 @@
+Method,Benchmarks,Avg_Time(s),Avg_Input_Tokens,Avg_Output_Tokens
+Loris,409,58.9178,8755.9395,2886.0939
+Lam4Inv,409,46.5731,5270.2879,811.8722

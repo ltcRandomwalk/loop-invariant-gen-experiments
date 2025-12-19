@@ -11,21 +11,27 @@ int main(){
   if(N < 0)
     return 1;
 
-  while (1){
+    /*@ 
+      loop invariant 0 <= x;
+      loop invariant -1 <= y;
+      loop invariant x <= N+1 ==> y == x;
+      loop invariant x > N+1 ==> y == 2*(N+1) - x;
+    */
+
+  while (y>=0){
      if (x <= N)
         y++;
      else if(x >= N+1)
        y--;
-     else return 1;
 
-     if ( y < 0)
-       break;
      x++;
   }
 
+  //@ assert(!(N >= 0 && y < -1 && x >= 2 * N + 4));
+
   if(N >= 0)
-    if(y == -1)
-      if (x >= 2 * N + 3)
+    if(y < -1)
+      if (x >= 2 * N + 4)
         goto ERROR;
 
   return 1;

@@ -48,12 +48,13 @@ def verify_implication(P_c_list, Q_c):
         
         P_smt = convert_c_assert_to_smtlib2("(" + P_c + ")")
         Q_smt = convert_c_assert_to_smtlib2("(" + Q_c + ")")
-        print(P_smt, Q_smt)
+        #print(P_smt, Q_smt)
         
         P_z3, Q_z3 = parse_smt2_string(decl + "\n" + P_smt + "\n" + Q_smt)
-        print(P_z3, Q_z3)
+        #print(P_z3, Q_z3)
         
         solver = Solver()
+        solver.set("timeout", 600)
         #solver.from_string(decl + "\n" + P_smt + "\n" + Q_smt)
         
         
@@ -70,7 +71,7 @@ def verify_implication(P_c_list, Q_c):
         else:
             return True, None  # 成立
     except Z3Exception as e:
-        print("Z3 exception.")
+        #print("Z3 exception.")
         return True, None
 
 # 示例：验证 i == 1 -> i <= n + 1

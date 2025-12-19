@@ -5,7 +5,7 @@ class Checker(ABC):
     @abstractmethod
     def __init__(self, name):
         self.name = name
-        self.timeout = 10
+        self.timeout = 5
 
     @abstractmethod
     def check(self, code, check_variant, check_contracts):

@@ -1,6 +1,8 @@
 from openai import OpenAI
 import os
 from typing import Dict, Tuple, List
+import random
+import time
 
 class LLM():
     def __init__(self):
@@ -50,23 +52,98 @@ class XMCPLLM(LLM):
         super().__init__()
         self.model = model
 
-    def get_response_by_json(self, messages: List) -> Tuple[str, List]:
+    def get_response_by_json(self, messages: List, input_token_list=[], output_token_list=[]) -> Tuple[str, List]:
         client = OpenAI(
-            base_url='https://llm.xmcp.ltd/',
-            api_key=os.getenv("XMCP_API_KEY"),
+            base_url='https://yunwu.ai/v1',
+            api_key=os.getenv("YUNWU_API_KEY"),
         )
 
-        chat_completion = client.chat.completions.create(
-            messages=messages,
-            model=self.model,
-        )
+        while True:
+            try:
+                chat_completion = client.chat.completions.create(
+                    messages=messages,
+                    model=self.model,
+                    
+                )
+                break
+            except Exception as e:
+                print(repr(e))
+                time.sleep(random.random() * 10)
+                continue
+
+        
 
         response = chat_completion.choices[0].message.content
+        input_tokens = chat_completion.usage.prompt_tokens
+        output_tokens = chat_completion.usage.completion_tokens
+
+       
+
+        input_token_list.append(input_tokens)
+        output_token_list.append(output_tokens)
+        #print(input_tokens, output_tokens, chat_completion.usage.total_tokens, chat_completion.usage.prompt_tokens_details)
         chat_history = messages + [ {"role": "assistant", "content": response}]
+        #print(chat_completion)
         
         return response, chat_history
     
-    def get_response_by_prompt(self, prompt, chat_history=[]) -> Tuple[str, List]:
+    def get_response_by_prompt(self, prompt, chat_history=[], input_token_list=[], output_token_list=[]) -> Tuple[str, List]:
         messages = chat_history + [ {"role": "user", "content": prompt} ]
-        return self.get_response_by_json(messages)
+        return self.get_response_by_json(messages, input_token_list, output_token_list)
+    
+class StreamLLM(LLM):
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
 
+    def parse_streaming_output(self, chat_completion):
+        reasoning_content = ""
+        content = ""
+        input_tokens, output_tokens = 0, 0
+        for chunk in chat_completion:
+            if chunk.choices and hasattr(chunk.choices[0].delta, 'reasoning_content') and chunk.choices[0].delta.reasoning_content:
+                reasoning_content += chunk.choices[0].delta.reasoning_content
+            elif chunk.choices and hasattr(chunk.choices[0].delta, 'content') and chunk.choices[0].delta.content:
+                content += chunk.choices[0].delta.content
+            elif hasattr(chunk, 'usage') and chunk.usage:
+                input_tokens = chunk.usage.prompt_tokens
+                output_tokens = chunk.usage.completion_tokens
+        return reasoning_content, content, input_tokens, output_tokens
+    
+    def get_response_by_json(self, messages: List, input_token_list=[], output_token_list=[]) -> Tuple[str, List]:
+        client = OpenAI(
+            base_url='https://dashscope.aliyuncs.com/compatible-mode/v1',
+            api_key=os.getenv("ALI_API_KEY"),
+        )
+
+        while True:
+            try:
+                chat_completion = client.chat.completions.create(
+                    messages=messages,
+                    model=self.model,
+                    extra_body={"enable_reasoning": True},
+                    stream=True,
+                    stream_options={"include_usage": True}
+                )
+                break
+            except Exception as e:
+                print(repr(e))
+                time.sleep(random.random() * 10)
+                continue
+
+
+
+        reasoning_content, response, input_tokens, output_tokens = self.parse_streaming_output(chat_completion)
+
+        input_token_list.append(input_tokens)
+        output_token_list.append(output_tokens)
+        #print(input_tokens, output_tokens, chat_completion.usage.total_tokens, chat_completion.usage.prompt_tokens_details)
+        chat_history = messages + [ {"role": "assistant", "content": response}]
+        #print(chat_completion)
+
+        
+        return response, chat_history
+    
+    def get_response_by_prompt(self, prompt, chat_history=[], input_token_list=[], output_token_list=[]) -> Tuple[str, List]:
+        messages = chat_history + [ {"role": "user", "content": prompt} ]
+        return self.get_response_by_json(messages, input_token_list, output_token_list)

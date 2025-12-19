@@ -14,12 +14,7 @@ int main() {
     } else {
         i = 1;
     }
-/*@
-  loop invariant i1: (i % 2 == 0) ==> (a == i / 2);
-  loop invariant i2: b == a; 
-  loop invariant i3: j == i + 1; 
-  loop invariant i4: i >= 0;
-*/
+
     while (unknown_int()) {
         a++;
         b += (j - i);

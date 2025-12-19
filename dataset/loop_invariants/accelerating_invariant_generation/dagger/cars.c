@@ -1,108 +1,46 @@
-// Source: data/benchmarks/accelerating_invariant_generation/dagger/cars.c
-#include <stdlib.h>
-#define assume(e) if(!(e)) exit(-1);
-extern int unknown_int(void);
+int main() {
+    int x1;
+    int v1;
+    int x2;
+    int v2;
+    int x3;
+    int v3;
+    int t;
 
-int nondet_int();
+    // pre-condition
+    x1 = 100;
+    x2 = 75;
+    x3 = -50;
+    assume(v3 >= 0);
+    assume(v1 <= 5);
+    assume(v1 - v3 >= 0);
+    assume(2 * v2 - v1 - v3 == 0);
+    t = 0;
+    assume(v2 + 5 >= 0);
+    assume(v2 <= 5);
 
-int main()
-{
-	int x1;
-	int v1;
-	int x2;
-	int v2;
-	int x3;
-	int v3;
-	int t;
+    // loop-body
+    while (v2 + 5 >= 0 && v2 <= 5) {
+        if (unknown()) {
+            if(2 * x2 - x1 - x3 >= 0){
+            x1 = x1 + v1;
+            x3 = x3 + v3;
+            x2 = x2 + v2;
+            v2 = v2 - 1;
+            t = t + 1;
+            }
+        } else {
+            if(2 * x2 - x1 - x3 <= 0){
+            x1 = x1 + v1;
+            x3 = x3 + v3;
+            x2 = x2 + v2;
+            v2 = v2 + 1;
+            t = t + 1;
+            }
+        }
+    }
 
-	x1=100;
-	x2=75;
-	x3=-50;
-	if (! (v3 >= 0)) 
-return 0;
-
-	if (! (v1 <= 5)) 
-return 0;
-
-	if (! (v1 -v3 >= 0)) 
-return 0;
-
-	if (! (2* v2 - v1 - v3 == 0)) 
-return 0;
-
-	t=0;
-
-	if (! (v2 +5 >=0)) 
-return 0;
-
-	if (! (v2 <= 5)) 
-return 0;
-
-	while (unknown_int())
-	{
-		if (! (v2 +5 >=0)) 
-return 0;
-
-		if (! (v2 <= 5)) 
-return 0;
-
-		if (unknown_int())
-		{
-			if (! (2* x2 - x1 - x3>=0)) 
-return 0;
-
-			x1 = x1+v1;
-			x3 = x3+v3;
-			x2 = x2+v2;
-			v2 = v2-1;
-			t = t+1;
-		}
-		else
-		{
-			if (! (2*x2 -x1-x3 <=0)) 
-return 0;
-
-			x1 = x1+v1;
-			x3 = x3+v3;
-			x2 = x2+v2;
-			v2 = v2+1;
-			t = t+1;
-		}
-	}
-	{;
-//@ assert(v1 <= 5);
-}
-
-	{;
-//@ assert(2*v2 + 2*t  >= v1 + v3);
-}
-
-	{;
-//@ assert(5*t  + 75 >= x2);
-}
-
-	{;
-//@ assert(v2 <= 6);
-}
-
-	{;
-//@ assert(v3  >= 0);
-}
-
-	{;
-//@ assert(v2 + 6 >= 0);
-}
-
-	{;
-//@ assert(x2 + 5*t >= 75);
-}
-
-	{;
-//@ assert(v1 - 2*v2 + v3 + 2*t >= 0);
-}
-
-	{;
-//@ assert(v1 - v3 >= 0);
-}
-
+    // post-conditions
+    assert(v1 <= 5 && 2 * v2 + 2 * t >= v1 + v3 && 5 * t + 75 >= x2 && v2 <= 6 && v3 >= 0 && v2 + 6 >= 0 && x2 + 5 * t >= 75 && v1 - 2 * v2 + v3 + 2 * t >= 0 && v1 - v3 >= 0);
+    
 }

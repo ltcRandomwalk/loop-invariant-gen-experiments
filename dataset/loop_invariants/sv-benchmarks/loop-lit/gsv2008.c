@@ -9,12 +9,7 @@ int main() {
     x = -50;
     y = unknown_int();
     if (!(-1000 < y && y < LARGE_INT)) return 0;
-    /*@
-  loop invariant -50 <= x < 0;
-  loop invariant -1000 < y < LARGE_INT;
-  loop invariant y >= -1000;
-  loop variant -x;
-*/
+   
     while (x < 0) {
 	x = x + y;
 	y++;

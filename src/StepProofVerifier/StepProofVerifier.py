@@ -4,9 +4,11 @@ from .Config import Config
 from datetime import datetime
 import logging
 from .Prompt import Prompt
-from .LLM import CloseAILLM, XMCPLLM
+from .LLM import CloseAILLM, XMCPLLM, StreamLLM
 import re
 from .SMTSolver import verify_implication, is_valid_c_expression
+from .BMC import BMC
+import time
 
 class StepProofVerifier():
     def __init__(self, benchmark_path):
@@ -14,30 +16,67 @@ class StepProofVerifier():
         self.checker = FramaCChecker()
         self.benchmark_path = benchmark_path
         self.benchmark = FramaCBenchmark(benchmark_path, self.config.benchmark_features, False)
+        self.code = self.benchmark.get_code(benchmark_path)
         
-        self.model = "volc/deepseek-v3-250324"
-        self.llm = XMCPLLM(self.model)
+        self.model = "gpt-4.1-2025-04-14"
+        self.stream = False
+        if not self.stream:
+            self.llm = XMCPLLM(self.model)
+        else:
+            self.llm = StreamLLM(self.model)
         self.chat_session = []
         self.max_iter = 10
         self.benchmark_features = self.config.benchmark_features
+
+        self.input_token_list = []
+        self.output_token_list = []
+
+        self.now_invariants = []
+
+        self.timeout = 600
+        self.input_limit = 100000
+        self.output_limit = 50000
+        self.token_limit = 150000
+
+        self.AnsSet = []
         
+    def extractInvariantBlock(self, response):
+        invariants = []
+        self.now_invariants = []
+        try:
+            invariant_block = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)[-1]
+        except Exception as e:
+            return ""
+        
+        for line in invariant_block.split('\n'):
+            pattern = r"assert\((.*?)\);"
+            matches = re.findall(pattern, line, flags=re.DOTALL)
+            for match in matches:
+                invariants.append(match)
+                self.now_invariants.append(match)
+                
+        result = "/*@\n" + "\n".join([
+            f"loop invariant i{idx + 1}: " + invariants[idx] + ";" for idx in range(len(invariants))
+        ]) + "*/"
+
+        return result
 
     def getInitInvariants(self):
         ### Return invariant block
-        code = self.benchmark.get_code(self.benchmark_path)
+        code = self.code
         prompt = Prompt.get_init_invariants_prompt(code)
-        response, chat_history = self.llm.get_response_by_prompt(prompt)
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=[], input_token_list=self.input_token_list, output_token_list=self.output_token_list)
         self.chat_session += chat_history
         # Parsing invariants
-        pattern = r'/\*@.*?\*/'
-        invariant_block = re.findall(pattern, response, re.DOTALL)[-1]
-        return invariant_block
-        #invariant_block = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)[-1]
+        #pattern = r'/\*@.*?\*/'
+        #invariant_block = re.findall(pattern, response, re.DOTALL)[-1]
         #return invariant_block
+
+        return self.extractInvariantBlock(response)
     
     def checkInvariants(self, invariant_block):
         checker_input_with_annotations = self.benchmark.combine_llm_outputs(
-            self.benchmark.get_code(self.benchmark_path),
+            self.code,
             [invariant_block],
             self.benchmark_features,
         )
@@ -45,7 +84,7 @@ class StepProofVerifier():
         __success, checker_message = self.checker.check(
             checker_input_with_annotations,
             check_variant=False,
-            check_contracts=False,
+            check_contracts=False
         )
 
         return __success, checker_message
@@ -62,7 +101,27 @@ class StepProofVerifier():
             logging.ERROR(f"Invalid type while getting natural proof: {type}")
             assert(False)
         
-        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session)
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session, input_token_list=self.input_token_list, output_token_list=self.output_token_list)
+        self.chat_session = chat_history
+        return response
+    
+    def getNaturalProofNew(self, loop_invariant: str, type: str, invariant_block: str):
+        code = self.code
+        prompt = Prompt.new_session_natural_proof_prompt(code, invariant_block)
+
+        if type == "establishment":
+            prompt += Prompt.prove_establishment_prompt(loop_invariant)
+        elif type == "preservation":
+            prompt += Prompt.prove_preservation_prompt(loop_invariant)
+        elif type == "assertion":
+            prompt += Prompt.prove_assertion_prompt(loop_invariant)
+        else:
+            logging.ERROR(f"Invalid type while getting natural proof: {type}")
+            assert(False)
+
+        logging.info(prompt)
+        
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=[], input_token_list=self.input_token_list, output_token_list=self.output_token_list)
         self.chat_session = chat_history
         return response
 
@@ -76,11 +135,11 @@ class StepProofVerifier():
     
 
     def checkNaturalProof(self, invariant_block, natural_proof, proof_steps, type, loop_invariant):
-        code = self.benchmark.get_code(self.benchmark_path)
+        code = self.code
         for step in proof_steps:
             logging.info(f"Formalizing step {step}....")
             formalization_prompt = Prompt.formalize_step_prompt(code, invariant_block, natural_proof, step)
-            formalized_proof, formalize_session = self.llm.get_response_by_prompt(formalization_prompt)
+            formalized_proof, formalize_session = self.llm.get_response_by_prompt(formalization_prompt, input_token_list=self.input_token_list, output_token_list=self.output_token_list)
             logging.info(formalized_proof)
 
             errors_in_proof = self.checkFormalizedProof(formalized_proof, type, loop_invariant)
@@ -89,6 +148,37 @@ class StepProofVerifier():
         return None, None
     
 
+    def checkWholeNaturalProof(self, invariant_block, natural_proof, type, loop_invariant):
+        code = self.code
+        formalization_prompt = Prompt.formalize_whole_prompt(code, invariant_block, natural_proof)
+        formalized_proof, _ = self.llm.get_response_by_prompt(formalization_prompt, input_token_list=self.input_token_list, output_token_list=self.output_token_list)
+        logging.info(formalized_proof)
+
+        #proof_steps = self.getProofSteps(formalized_proof)
+        #logging.info(f"Found proof steps in formalized proof: {proof_steps}")
+
+        formalized_steps = []
+
+        step_pattern = re.compile(r'\[STEP \d+:.*?\]', re.DOTALL)
+        proof_steps = list(step_pattern.finditer(formalized_proof))
+        
+        if not proof_steps:
+            return None,None
+
+        for i, match in enumerate(proof_steps):
+            start = match.start()
+            
+            end = proof_steps[i+1].start() if i < len(proof_steps)-1 else len(formalized_proof)
+            formalized_steps.append(formalized_proof[start:end].strip())
+
+        for step in formalized_steps:
+            errors_in_proof = self.checkFormalizedProof(step, type, loop_invariant)
+            if errors_in_proof:
+                return step, errors_in_proof
+        
+        return None, None
+
+
     def checkInitialConditions(self, initial_conditions, type) -> List[str]:
         """
         Return initial conditions that are not valid.
@@ -96,7 +186,7 @@ class StepProofVerifier():
         if type != "establishment":
             raise Exception("Check initial conditions for cases that are not establishment.")
         
-        code = self.benchmark.get_code(self.benchmark_path)
+        code = self.code
         checker_input_with_initial_conditions = self.benchmark.combine_establishment_assertions(
             code, initial_conditions, self.benchmark_features
         )
@@ -107,6 +197,7 @@ class StepProofVerifier():
             checker_input_with_initial_conditions,
             check_variant=False,
             check_contracts=False,
+            timeout=1
         )
 
         _, _, not_valid_assertions = self.parse_framac_output(checker_message)
@@ -205,27 +296,56 @@ class StepProofVerifier():
     
     def getFeedbackInvariants(self, invariant, type, step, errors_in_proof):
         prompt = Prompt.feedback_prompt(step, errors_in_proof, invariant, type)
-        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session)
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session, input_token_list=self.input_token_list, output_token_list=self.output_token_list)
         self.chat_session = chat_history
-        invariant_blocks = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)
-        if not invariant_blocks:
-            return ""
-        return invariant_blocks[-1]
+        #invariant_blocks = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)
+        #if not invariant_blocks:
+         #   return ""
+        #return invariant_blocks[-1]
+        return self.extractInvariantBlock(response)
     
     def getSyntaxErrorInvariants(self):
         prompt = Prompt.syntax_feedback_prompt()
-        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session)
+        response, chat_history = self.llm.get_response_by_prompt(prompt, chat_history=self.chat_session, input_token_list=self.input_token_list, output_token_list=self.output_token_list)
         self.chat_session = chat_history
-        invariant_blocks = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)
-        if not invariant_blocks:
-            return ""
-        return invariant_blocks[-1]
+        #invariant_blocks = re.findall(r'(?<=```c\s).*?(?=```)', response, re.DOTALL)
+        #if not invariant_blocks:
+        #    return ""
+        #return invariant_blocks[-1]
+        return self.extractInvariantBlock(response)
+    
+    def runBMC(self, not_established_invariants):
+        code = self.code
+        cAssertionList = []
+        for invariant in self.now_invariants:
+            #if invariant in not_established_invariants:
+                #logging.info(f"Skip invariant {invariant} because it is not established.")
+                #continue
+            if "==>" in invariant:
+                implication = invariant.split("==>")
+                if len(implication) == 2:
+                    cAssertionList.append(f"assert(!({implication[0]}) || ({implication[1]}))")
+            else:
+                cAssertionList.append(f"assert({invariant})")
+        
+        #cAssertionList = [ "assert(" + invariant + ")" for invariant in self.now_invariants ]
+        
+        bmc = BMC(code, cAssertionList, self.benchmark_path)
+        self.AnsSet = bmc.run_bmc(self.AnsSet)
+        logging.info(f"BMC result: {self.AnsSet}" )
+        
 
+    def run(self, log_path="", no_preprocess=False):
+        nowtime = datetime.now().strftime(f"%m_%d_%H_%M_%S")
+        start_time = time.time()
+        if log_path:
+            self.log_path = log_path
+        else:
+            self.log_path = f"logs/{self.benchmark_path.replace('/', '_')}_{nowtime}"
 
-
-
-    def run(self):
-        self.log_path = datetime.now().strftime(f"logs/StepProof_%m_%d_%H_%M_%S")
+        for handler in logging.root.handlers[:]:
+            handler.close()
+            logging.root.removeHandler(handler)
         logging.basicConfig(filename=self.log_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
         logging.info(f"Running benchmark {self.benchmark_path}...\n")
 
@@ -238,16 +358,20 @@ class StepProofVerifier():
         logging.info(f"Begin iteration...\n")
         while iters < self.max_iter:
             ### 2. Check Invariants
+
+
+            
             
             success, checker_message = self.checkInvariants(invariant_block)
             if success:
                 logging.info(f"Succeed in {iters} iterations!\n")
                 logging.info(f"Resulted invariants: {invariant_block}\n")
-                return
+                break
             
             iters += 1
 
             logging.info(f"===================Iteration: {iters}===================")
+            logging.info(f"{self.input_token_list}, {self.output_token_list}")
             not_established_invariants, not_preserved_invariants, not_valid_assertions = self.parse_framac_output(checker_message)
             
             logging.info(f"Not established: {not_established_invariants}")
@@ -288,6 +412,133 @@ class StepProofVerifier():
             invariant_block = self.getFeedbackInvariants(invariant, type, step, errors_in_proof)
             logging.info(f"Fixed invariant block: {invariant_block}")
 
+        logging.info(f"{success}, {invariant_block}, {iters}, {sum(self.input_token_list)}, {sum(self.output_token_list)}")
+
+        return success, invariant_block, iters, sum(self.input_token_list), sum(self.output_token_list)
+    
+
+    def runWithShortenTokens(self, log_path="", no_preprocess=False):
+        nowtime = datetime.now().strftime(f"%m_%d_%H_%M_%S")
+        start_time = time.time()
+        if log_path:
+            self.log_path = log_path
+        else:
+            self.log_path = f"logs/{self.benchmark_path.replace('/', '_')}_{nowtime}"
+
+        for handler in logging.root.handlers[:]:
+            handler.close()
+            logging.root.removeHandler(handler)
+        logging.basicConfig(filename=self.log_path, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.info(f"Running benchmark {self.benchmark_path}...\n")
+
+        ### 1. Get Initial Invariants
+        invariant_block = self.getInitInvariants()
+        logging.info(f"Initial invariant block: \n {invariant_block}\n")
+        #logging.info(self.llm.parse_session(self.chat_session))
+
+        iters = 0
+        logging.info(f"Begin iteration...\n")
+        success_by_bmc = False
+        while True:
+            ### 2. Check Invariants
+            current_time = time.time()
+            if current_time - start_time >= self.timeout:
+                break
+
+            if sum(self.input_token_list) + sum(self.output_token_list) >= self.token_limit:
+                break
+
+            
+            
+            success, checker_message = self.checkInvariants(invariant_block)
+            if success:
+                logging.info(f"Succeed in {iters} iterations!\n")
+                logging.info(f"Resulted invariants: {invariant_block}\n")
+                break
+
+
+            
+
+               
+            
+            iters += 1
+
+
+
+            logging.info(f"===================Iteration: {iters}===================")
+            logging.info(f"{self.input_token_list}, {self.output_token_list}")
+            not_established_invariants, not_preserved_invariants, not_valid_assertions = self.parse_framac_output(checker_message)
+            
+            logging.info(f"Not established: {not_established_invariants}")
+            logging.info(f"Not preserved: {not_preserved_invariants}")
+            logging.info(f"Not valid assertions: {not_valid_assertions}")
+
+            ### 3. Natural Language Proof
+
+            if not_established_invariants:
+                invariant, type = not_established_invariants[0], "establishment"
+            elif not_preserved_invariants:
+                invariant, type = not_preserved_invariants[0], "preservation"
+            elif not_valid_assertions:
+                invariant, type = not_valid_assertions[0], "assertion"
+            else:      # Syntax Error
+                # assert(False)
+                invariant_block = self.getSyntaxErrorInvariants()
+                logging.info(f"Syntax Error. Fixed invariant block: {invariant_block}")
+                continue
+
+
+            ### Optional: Run BMC
+
+            if self.config.BMC:
+                Anslen = len(self.AnsSet)
+                logging.info("==================BMC begin===================")
+                self.runBMC(not_established_invariants)
+                logging.info("==================BMC end===================")
+                self.AnsSet = [ ans for ans in self.AnsSet if ans != ""]
+                if len(self.AnsSet) > Anslen:
+                    logging.info("==================Verification begin===================")
+                    combined_invariant_block = "/*@\n" + "\n".join([
+                        f"loop invariant i{idx + 1}: " + self.AnsSet[idx] + ";" for idx in range(len(self.AnsSet))
+                    ]) + "*/"
+                    success, checker_message = self.checkInvariants(combined_invariant_block)
+                    if success:
+                        invariant_block = combined_invariant_block
+                        logging.info(f"Succeed in {iters} iterations!\n")
+                        logging.info(f"Resulted invariants: {invariant_block}\n")
+                        success_by_bmc = True
+                        break
+                    logging.info("==================Verification end===================")
+
+
+            
+            logging.info(f"Get natural proof for the {type} of {invariant}")
+            natural_proof = self.getNaturalProofNew(invariant, type, "\n".join([ "assert(" + invariant + ");" for invariant in self.now_invariants ]))
+            logging.info(f"Natural Proof: {natural_proof}")
+
+
+            
+            ### 4. Formalize and check each step of the proof
+            proof_steps = self.getProofSteps(natural_proof)
+            logging.info(f"Found proof steps in natural language proof: {proof_steps}")
+
+            step, errors_in_proof = self.checkNaturalProof(invariant_block, natural_proof, proof_steps, type, invariant)
+            logging.info(f"Wrong proof in step {step}: {errors_in_proof}")
+            #if not step:   # TODO: No error found in the proof.
+                #continue
+
+            
+
+
+
+            ### 5. Feedback and get fixed loop invariants
+            invariant_block = self.getFeedbackInvariants(invariant, type, step, errors_in_proof)
+            logging.info(f"Fixed invariant block: {invariant_block}")
+
+        logging.info(f"{success}, {invariant_block}, {iters}, {sum(self.input_token_list)}, {sum(self.output_token_list)}")
+
+        return success, invariant_block, iters, sum(self.input_token_list), sum(self.output_token_list), success_by_bmc
+
 
 
 
@@ -324,5 +575,4 @@ class StepProofVerifier():
                 not_valid_assertion += matches 
         
         return not_established_invariants, not_preserved_invariants, not_valid_assertion
-            
-
+    

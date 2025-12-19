@@ -1,2 +1,0 @@
-[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/test.c (with preprocessing)
-/home/tcli/loop-invariant-gen-experiments/test.c:5:[kernel:annot:missing-spec] warning: Neither code nor specification for function unknown_int, generating default assigns from the prototype

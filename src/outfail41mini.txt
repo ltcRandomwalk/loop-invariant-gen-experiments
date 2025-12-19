@@ -1,0 +1,80 @@
+-----------Role: user-----------
+
+int main() {
+    int a;
+    int j;
+    int m;
+
+    //pre-condition
+    a = 0;
+    assume(m > 0);
+    j = 1;
+
+    //loop-body
+    while (j <= m) {
+        if (unknown())
+            a++;
+        else
+            a--;
+        j++;
+    }
+
+    //post-condition
+    assert(a >= -m && a <= m);
+}
+
+Please analyze the above C code and verify the assertions in it.
+In order to verify the assertions, you need to propose loop invariants for the loop in the program. A loop invariant is a property that satisfies the following conditions:
+(1) Holds before the loop, regardless of the loop condition.
+(2) Holds after each iteration of the loop, including the termination of the loop.
+
+Besides, the loop invariant should be helpful to verify the assertions.
+
+The loop invariant should strictly follow the grammar of C logical expressions. It can contain "&&", "||" and "!". Besides, the loop invariant should only contain variables that are declared in the program. It cannot contain any function or any other notations. Summarize the loop invariants in the following format in the end of your response:
+
+```c 
+/*@ 
+    loop invariant i1: ...;
+    loop invariant i2: ...;
+    ...
+*/
+
+```
+
+Don't explain.
+    
+-----------Role: assistant-----------
+
+/*@
+    loop invariant i1: a >= -(j - 1) && a <= (j - 1);
+    loop invariant i2: j >= 1;
+    loop invariant i3: m > 0;
+*/
+
+    
+-----------Role: user-----------
+
+Your loop invarinats are not sufficient to prove the final assertion -m <= a <= m. Please fix your loop invariants.
+
+The loop invariant should strictly follow the grammar of C logical expressions. It can contain "&&", "||" and "!". Besides, the loop invariant should only contain variables that are declared in the program. It cannot contain any function or any other notations. Summarize the fixed loop invariants in the following format in the end of your response:
+
+```c 
+/*@ 
+    loop invariant i1: ...;
+    loop invariant i2: ...;
+    ...
+*/
+
+```
+
+Don't explain.
+    
+-----------Role: assistant-----------
+```c 
+/*@ 
+    loop invariant i1: a >= -m && a <= m;
+    loop invariant i2: j >= 1 && j <= m + 1;
+    loop invariant i3: m > 0;
+*/
+```
+

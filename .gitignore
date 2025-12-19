@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 *$py.class
+final_benchmarks/
+new_benchmark/
+logs/
+dataset/
 
 # C extensions
 

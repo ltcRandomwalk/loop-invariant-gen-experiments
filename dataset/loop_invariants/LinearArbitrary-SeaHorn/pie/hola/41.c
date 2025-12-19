@@ -21,9 +21,7 @@ int main() {
      j+=i;
    }
 
-   /*@
-        assert k >= 0;
-      */
+
    int z = k + i + j;
    {;
 //@ assert(z > 2*n);

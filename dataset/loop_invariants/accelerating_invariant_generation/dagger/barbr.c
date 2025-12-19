@@ -24,193 +24,120 @@ int main()
 	p3=0;
 	p4=0;
 	p5=0;
-
+	/*@
+		
+		loop invariant p5 >= open;
+	*/ 
 	while(unknown_int())
 	{
 		if (unknown_int())
 		{
-			if (!(p1 >= 0)) 
-return 0;
-
-			if (!(p1 <= 0)) 
-return 0;
-
-			if (!(barber >= 1)) 
-return 0;
-
+			
+			if(p1 == 0 && barber >= 1){
 			barber = barber-1;
 			chair = chair+1;
-			p1 = 1;
+			p1 = 1;}
 		}
 		else
 		{
 			if (unknown_int())
 			{
-				if (!(p2 >= 0)) 
-return 0;
-
-				if (!(p2 <= 0)) 
-return 0;
-
-				if (!(barber >= 1)) 
-return 0;
+				if(p2 == 0 && barber >= 1){
 
 				barber = barber-1;
 				chair = chair+1;
 				p2 = 1;
+				}
 			}
 			else
 			{
 				if (unknown_int())
 				{
-					if (!(p2 >= 1)) 
-return 0;
-
-					if (!(p2 <= 1)) 
-return 0;
-
-					if (!(open >=1)) 
-return 0;
-
+					if(p2 == 1 && open >= 1) {
 					open = open -1;
 					p2 = 0;
+					}
 				}
 				else
 				{
 					if (unknown_int())
 					{
-						if (!(p3>=0)) 
-return 0;
-
-						if (!(p3<=0)) 
-return 0;
-
-						if (!(barber >=1)) 
-return 0;
-
+						
+						if(p3 == 0 && barber >= 1) {
 						barber = barber-1;
 						chair = chair +1;
-						p3 =1;
+						p3 =1;}
 					}
 					else
 					{
 						if (unknown_int())
 						{
-							if (!(p3>=1)) 
-return 0;
-
-							if (!(p3<=1)) 
-return 0;
-
-							if (!(open >=1)) 
-return 0;
-
+							
+							if(p3 == 1 && open >= 1) {
 							open = open -1;
-							p3 =0;
+							p3 =0;}
 						}
 						else
 						{
 							if (unknown_int())
 							{
-								if (!(p4 >=0)) 
-return 0;
-
-								if (!(p4 <=0)) 
-return 0;
-
-								if (!(barber >=1)) 
-return 0;
-
+								
+								if(p4 == 0 && barber >= 1) {
 								barber= barber-1;
 								chair = chair +1;
-								p4 = p4+1;
+								p4 = p4+1;}
 							}
 							else
 							{
 								if (unknown_int())
 								{
-									if (! (p4 >=1)) 
-return 0;
-
-									if (! (p4 <=1)) 
-return 0;
-
-									if (! (open >=1)) 
-return 0;
-
+									
+									if(p4 == 1 && open >= 1) {
 									open = open - 1;
 									p4=p4 -1;
+									}
 								}
 								else
 								{
 									if (unknown_int())
 									{
-										if (! (p5>=0)) 
-return 0;
-
-										if (! (p5<=0)) 
-return 0;
-
+										
+										if(p5 == 0) {
 										barber=barber+1;
-										p5=1;
+										p5=1;}
 									}
 									else
 									{
 										if (unknown_int())
 										{
-											if (! (p5>=1)) 
-return 0;
-
-											if (! (p5<=1)) 
-return 0;
-
-											if (! (chair >=1)) 
-return 0;
-
+											
+											if(p5 == 1 && chair >= 1) {
 											chair= chair -1;
-											p5=2;
+											p5=2;}
 										}
 										else
 										{
 											if (unknown_int())
 											{
-												if (! (p5>=2)) 
-return 0;
-
-												if (! (p5<=2)) 
-return 0;
-
+												
+												if(p5 == 2) {
 												open=open +1;
-												p5=3;
+												p5=3; }
 											}
 											else
 											{
 												if (unknown_int())
 												{
-													if (! (p5 >= 3)) 
-return 0;
-
-													if (! (p5 <= 3)) 
-return 0;
-
-													if (! (open == 0)) 
-return 0;
-
+													
+													if(p5 == 3 && open == 0)
 													p5=0;
 												}
 													else
 												{
-													if (! (p1 >= 1)) 
-return 0;
-
-													if (! (p1 <= 1)) 
-return 0;
-
-													if (! (open >= 1)) 
-return 0;
-
+													
+													if(p1 == 1 && open >= 1) {
 													open = open-1;
-													p1 = 0;
+													p1 = 0;}
 												}
 											}
 										}
