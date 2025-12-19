@@ -1,1 +1,0 @@
-gcc: warning: /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/code2inv: linker input file unused because linking not done

@@ -1,1 +1,0 @@
-[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/accelerating_invariant_generation/cav/20.c (with preprocessing)

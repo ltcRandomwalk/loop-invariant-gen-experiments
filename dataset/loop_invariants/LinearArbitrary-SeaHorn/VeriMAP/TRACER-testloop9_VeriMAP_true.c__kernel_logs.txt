@@ -1,2 +1,0 @@
-[kernel] Parsing /home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/VeriMAP/TRACER-testloop9_VeriMAP_true.c (with preprocessing)
-/home/tcli/loop-invariant-gen-experiments/dataset/loop_invariants/LinearArbitrary-SeaHorn/VeriMAP/TRACER-testloop9_VeriMAP_true.c:14:[kernel:annot-error] warning: \old undefined in this context. Ignoring loop annotation
